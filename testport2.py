@@ -452,14 +452,24 @@ def calculate_log_log_utility(returns):
 def calculate_log_log_sharpe(returns, window=252, risk_free_rate=0.04):
     if returns.empty or len(returns) < window: return np.nan
     try:
-        log_returns = np.log1p(returns[-window:])
+        # FIX: Clip returns to prevent values <= -1 from breaking log1p
+        # A value of -0.99999 represents a near-total loss without being mathematically invalid.
+        safe_returns = returns[-window:].clip(lower=-0.99999)
+        
+        log_returns = np.log1p(safe_returns) # Now using the cleaned data
+        
         log_log_returns = np.log1p(log_returns[log_returns > 0])
-        if log_log_returns.empty: return np.nan
+        if log_log_returns.empty or log_log_returns.isna().all(): return np.nan # Added check for all NaNs
+        
         mean_return = log_log_returns.mean() * 252
         std_return = log_log_returns.std() * np.sqrt(252)
         daily_rf = risk_free_rate / 252
-        return (mean_return - daily_rf) / std_return if std_return != 0 else np.nan
-    except Exception: return np.nan
+        
+        if std_return is None or std_return == 0 or pd.isna(std_return): return np.nan
+        
+        return (mean_return - daily_rf) / std_return
+    except Exception: 
+        return np.nan
 
 def calculate_volatility_autocorrelation(returns, window=252):
     if returns.empty or len(returns) < window: return np.nan
