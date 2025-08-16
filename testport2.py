@@ -337,6 +337,7 @@ def calculate_idiosyncratic_variance(returns_df, factor_returns_df, betas):
         logging.error(f"Error in idiosyncratic variance calculation: {e}")
         return pd.Series(0.0, index=returns_df.columns, name='IdioVariance')
 # PASTE THIS CORRECTED VERSION OVER THE OLD ONE
+# PASTE THIS CORRECTED VERSION OVER THE OLD ONE
 def calculate_fmp_weights(returns_df, new_factor_returns, cov_matrix, existing_factors_returns=None):
     """
     Calculates CORRECTED Factor-Mimicking Portfolio (FMP) weights.
@@ -504,6 +505,7 @@ def breakout(price, lookback=20, smooth=5):
     smoothed_output = output.ewm(span=smooth, min_periods=smooth//2).mean()
     scaled_output = (smoothed_output + 40.0) / 80.0
     return scaled_output.iloc[-1] if not scaled_output.empty else np.nan
+# PASTE THIS CORRECTED VERSION OVER THE OLD ONE
 # PASTE THIS CORRECTED VERSION OVER THE OLD ONE
 def calculate_volatility_adjusted_z_score(prices, period=252, ticker="Unknown", metric="Z-score", sector=None):
     """
