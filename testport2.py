@@ -30,14 +30,12 @@ logging.basicConfig(filename='stock_analysis.log', level=logging.INFO, format='%
 st.set_page_config(page_title="Quantitative Portfolio Analysis", layout="wide")
 
 # --- Data Structures and Mappings ---
-# (Keeping your existing data structures)
 sector_etf_map = {
     'Technology': 'XLK', 'Consumer Cyclical': 'XLY', 'Communication Services': 'XLC',
     'Financial Services': 'XLF', 'Industrials': 'XLI', 'Basic Materials': 'XLB',
     'Energy': 'XLE', 'Real Estate': 'XLRE', 'Healthcare': 'XLV',
     'Consumer Defensive': 'XLP', 'Utilities': 'XLU'
 }
-# Add key factor ETFs for new features
 factor_etfs = ['QQQ', 'IWM', 'DIA', 'EEM', 'EFA', 'IVE', 'IVW', 'MDY', 'MTUM', 'RSP', 'SPY', 'QUAL', 'SIZE', 'USMV']
 etf_list = list(set(sector_etf_map.values()) | set(factor_etfs))
 default_weights = {
@@ -88,7 +86,7 @@ columns = [
     "Revenue_Growth_Rate_5y", "Meets_Triple_Rule", "Return_21d", "Return_63d", "Return_126d", "Return_252d",
     "Audit_Risk", "Board_Risk", "Compensation_Risk", "Shareholder_Rights_Risk",
     "Overall_Risk", "Institutional_Ownership_Ratio", "Hurst_Exponent",
-    "Momentum", "Growth" # Added for new factor demonstrations
+    "Momentum", "Growth"
 ]
 tickers = ["KLAC", "NVDA", "NEU", "APH", "MSFT", "UI", "CME", "HLI", "EXEL", "HWM", "LRCX", "APP", "SCCO", "NFLX","DJT", "LLY", "FBTC", "EHC", "VRSK", "MCO", "RMD", "ALLE", "CTAS", "META", "CRS", "AGX", "INTU", "HALO", "RCL", "HEI", "CF", "GOOG", "EME", "DRI", "WWD", "TT", "TMUS", "BR", "BAH", "FTDR", "TDG", "FCFS", "CBOE", "VST", "JNJ", "AVGO", "BLK", "EAT", "NTAP", "IESC", "COP", "MTDR", "AIT", "AMAT", "SFM", "CW", "TPR", "STX", "RL", "HIMS", "WTS", "HCA", "NDAQ", "VRT", "AMGN", "COST", "ESE", "ROL", "MPLX", "FAST", "NVT", "CTRA", "BMI", "COR", "MELI", "WING", "NEM", "NSC", "FIX", "LRN", "BWXT", "EXPE", "POWL", "WELL", "SXT", "MA", "UTHR", "GD", "USFD", "PM", "ETN", "QDEL", "EVR", "MDT", "VEEV", "BKNG", "WINA", "FICO", "FSS", "FTNT", "PATK", "LECO", "GILD", "RSG", "MCK", "ICE", "CAKE", "PWR", "PLTR", "ALSN", "IPAR", "HESM", "GWW", "SYY", "ITW", "AWI", "PKG", "IBM", "QCOM", "CSCO", "CAH", "ITT", "LII", "DPZ", "URI", "TXRH", "TXN", "MO", "GSHD", "EBAY", "AJG", "FTI", "MSI", "ZTS", "CTRE", "IMO", "IDXX", "ORCL", "ITRI", "DY", "V", "GRMN", "PPC", "SPGI", "LEU", "UBER", "ALV", "LNG", "ADP", "SNPS", "TGLS", "GE", "PRIM", "UNP", "BSY", "MWA", "AXON", "TRGP", "EA", "ABT", "PH", "WAB", "FFIV", "JCI", "LIN", "VRSN", "MPWR", "TEL", "HD", "MAR", "MORN", "CACC", "NYT", "UHS", "QLYS", "SSNC", "CPRX", "LCII", "CL", "JBL", "OVV", "BX", "PJT", "YUM", "CVNA", "NXST", "FOX", "RRR", "DTE", "NTES", "WM", "LMT", "ACN", "DGX", "ROP", "MRK", "UGI", "BYD", "CR", "XOM", "DUOL", "MCD", "NDSN", "KTB", "LAD", "WMB", "APO", "MGY", "REVG", "ADI", "FN", "DE", "DLB", "GEN", "MNST", "HLT", "SBAC", "ENB", "ADT", "SYK", "CTSH", "EW", "BRO", "FLR", "CHTR", "VZ", "ARMK", "PLNT", "EXPD", "PNR", "PAYX", "MSA", "CHE", "GGG", "CDNS", "T", "AON", "CDW", "NRG", "IDCC", "CAT", "PTC", "TNL", "DIS", "UNH", "BRBR", "ATI", "DOCS", "LPLA", "JHG", "BJ", "SANM", "CCK", "ANSS", "PAG", "PR", "AMD", "XEL", "TW", "PIPR", "ATMU", "VMI", "WEC", "KMI", "RTX", "LULU", "HUBB","CORZ", "SHW", "OSK","RDDT", "PCAR", "CPA", "RS", "CACI", "AZO", "AROC", "PINS", "SNEX", "DORM", "PTCT", "MSCI", "PODD", "ECL", "ROK", "WDFC", "JKHY", "MTN", "HAL", "NOW", "TROW", "IRDM", "STE", "FDS", "MLI", "SBRA", "EXE", "PAYC", "HURN", "SCI", "GDDY", "BABA", "TSCO", "EMR", "ESAB", "CSL", "VICI", "DG", "SNA", "TDY", "GVA", "ORLY", "CHEF", "BMRN", "CIVI", "CHDN", "DK", "FHI", "EXR", "SU", "ENS", "MC", "HOOD", "DELL", "NXPI", "VRTX", "HON", "HAS", "UFPT", "KRYS", "CMCSA", "BDC", "ENSG", "LVS", "ULTA", "PG", "HRB", "ISRG", "SPXC", "GLPI", "ABBV", "EOG", "TER", "KR", "VMC", "PEGA", "HES", "GFF", "HSY", "SSD", "CPRT", "CEG", "UPWK", "CROX", "ATR", "EPD", "DCI", "HQY", "LOPE", "CORT", "TJX", "BSX", "BCPC", "ELS", "FLO", "H", "G", "DKS", "AEIS", "COKE", "EQT", "ROAD", "AMP", "VC", "HAE", "CVX", "WSM", "AAPL", "DDS", "REGN", "INGR", "WH", "MEDP", "CMG", "JAZZ", "AMT", "AEE", "PEP", "ET", "NFG", "LAZ", "KFY", "OSIS", "PCTY", "DOV", "WDC", "LAMR", "MMSI", "NTNX", "ZBH", "IT", "GHC", "WMT", "PHM", "ATO", "ACMR", "MATX", "TKR", "MAIN", "OXY", "WCC", "NEE", "TTC", "OKE", "QSR", "HLNE", "TRU", "CRM", "BKR", "IBP", "AYI", "CNM", "EXP", "URBN", "SKYW", "SWKS", "DT", "AME", "WMG", "BOOT", "FLEX", "WES", "ELF", "F", "PBH", "MANH", "AOS", "OTIS", "APPF", "CPNG", "MKSI", "OLED", "XYL", "GPOR", "SLB", "TMO", "TTMI", "ADM", "TYL", "AMZN", "PEG", "EPR", "STAG", "FANG", "PAGP", "SMLR", "NOC", "CWH", "ADBE", "DECK", "TXT", "LOW", "NBIX", "AMCR", "MSM", "CVLT", "K", "CNP", "YUMC", "SPSC", "CRH", "A", "BRK-A", "LNTH", "MKTX", "RPRX", "CSX", "PII", "SAIC", "NET", "ADSK", "GMS", "CARR", "RMBS", "THC", "IVZ", "CTVA", "CRUS", "PAA", "NNN", "CBT", "AR", "WMS", "CHH", "WPC", "MMS", "ES", "TDW", "FDX", "OHI", "KMB", "WCN", "NKE", "POWI", "WAT", "CMI", "CLX", "LOGI", "OTEX", "BMY", "FIVE", "UPS", "YOU", "BBWI", "EXC", "PPL", "NUE", "EFX", "STRL", "AMG", "MPC", "WSO", "DXCM", "CVS", "IEX", "WHD", "DVN", "TRMB", "KAI", "AVY", "WST", "TMDX", "GM", "CIEN", "UAL", "NSP", "HXL", "ZM", "YELP", "KVUE", "TTD", "LNT", "FOUR", "MAT", "FLS", "ROST", "PSX", "RPM", "KEX", "LKQ", "CP", "LTH", "CARG", "DDOG", "CGNX", "BROS", "ANF", "LHX", "PFE", "NVR", "OC", "TMHC", "MARA", "PANW", "AL", "GTLS", "GNTX", "MIDD", "GPN", "EMN", "GLW", "AVT", "PEN", "INFA", "BCO", "STZ", "HST", "CBRE", "FTAI", "ASO", "THO", "D", "TRNO", "OWL", "ZBRA", "RRC", "NI", "CWEN", "BLD", "ABNB", "CHD", "ACIW", "SKX", "POOL", "SKY", "KO", "VAC", "ED", "DVA", "SLGN", "GPC", "RKLB", "AMED", "PSN", "IQV", "FUL", "WFRD", "LH", "CLH", "LPX", "MUSA", "FE", "SMCI", "VIRT", "GEHC", "MMM", "GTES", "LEA", "TDC", "MAS", "ACM", "GNRC", "CVCO", "DOCU", "DBX", "ESS", "COHR", "KDP", "PPG", "DOX", "GPI", "BDX", "VNT", "GIS", "FNF", "PGNY", "OPCH", "BOX", "UDR", "MOH", "RBA", "JLL", "SHOO", "SBUX", "EGP", "BXP", "MLM", "CRC", "TGTX", "MTD", "ODFL", "UFPI", "APA", "MYRG", "CELH", "FI", "VNOM", "GPK", "PARA", "TEX", "RVLV", "BRKR", "KEYS", "OMC", "CDE", "JBHT", "BIIB", "FCX", "SRE", "ACAD", "MDLZ", "CMS", "INCY", "MTZ", "OGN", "ST", "SPG", "BALL", "EPRT", "LFUS", "ATGE", "CUBE", "INSM", "HTHT", "GATX", "IP", "J", "EXLS", "VLO", "HOLX", "XPO", "MTCH", "DAL", "ALKS", "LYB", "ENTG", "SLM", "BL", "ARRY", "CNC", "LW", "FMC", "ELAN", "ARW", "KNF", "YETI", "CAVA", "ESI", "SITE", "TREX", "WEN", "ABG", "VNO", "TGT", "MKC", "HP", "RRX", "BFAM", "DHR", "AVB", "MHO", "R", "TTEK", "SEE", "CNXC", "CRI", "NOVT", "MGM", "AA", "TOST", "BG", "KIM", "MSTR", "SMPL", "LEVI", "REG", "VVV", "PINC", "WSC", "MSGS", "ROIV", "NVS", "ETR", "SMG", "TGNA", "HRI", "ZS", "VRNA", "CCJ", "ALGN", "AMH", "BLDR", "DX", "STLD", "SWX", "LYV", "PSTG", "INOD", "TGI", "PK", "HPE", "BEN", "LYFT", "BZ", "SON", "CHWY", "SHAK", "WDAY", "SO", "CBZ", "EVRG", "ROOT", "FRT", "AN", "GXO", "CHRW", "PYPL", "HR", "KHC", "CCL", "HL", "TCOM", "GDS", "MTSI", "LBRT", "VSEC", "COO", "WYNN", "HOG", "AXTA", "HRL", "INVH", "SR", "GWRE", "HSIC", "FTV", "BCC", "MGNI", "ACLS", "ZTO", "CCCS", "IDA", "BBY", "APTV", "MOG-A", "PZZA", "EQR", "MAA", "FND", "RBLX", "SKT", "LIVN", "DRS", "SWK", "BURL", "ARCC", "KBR", "SNX", "ON", "FIS", "VSCO", "WU", "CSGP", "AAOI", "EPAM", "TFX", "TAP", "BKH", "MOS", "SYNA", "JEF", "SM", "AKAM", "TSLA", "POST", "NSIT", "GOLF", "WHR", "TEAM", "ITGR", "RGC", "VOD", "AAON", "COIN", "FSLR", "DV", "ALNY", "SIG", "BC", "TECH", "BWA", "SAND", "DUK", "TNET", "M", "TRP", "TPH", "PLAY", "IRM", "MOD", "MAC", "TSSI", "NCLH", "NFE", "HGV", "QRVO", "BILL", "QTWO", "IPG", "REXR", "ETSY", "NE", "DASH", "CRGY", "INSP", "BE", "COTY", "PLD", "TMC", "AFRM", "DEI", "CBRL", "SMR", "EG", "DXC", "LSTR", "TIGR", "NJR", "CAG", "DAN", "AEO", "TSN", "HII", "COLM", "WY", "FCN", "KNX", "KRG", "HPQ", "ORA", "CRWD", "FR", "SOFI", "WRBY", "CLSK", "EIX", "OLN", "RYTM", "IONS", "RGLD", "CUZ", "WTRG", "AMKR", "GMED", "SNOW", "BRX", "ABR", "AXSM", "FROG", "WTW", "KTOS", "TDS", "VCYT", "OKTA", "DKNG", "APD", "ICLR", "AVDX", "O", "LSCC", "CRK", "RHI", "CNK", "IONQ", "EQIX", "BPMC", "GME", "CPB", "JXN", "SAIA", "B", "ENPH", "RIOT", "PTGX", "EYE", "APLE", "FUN", "MQ", "SIRI", "TTWO", "KSS", "TARS", "SAP", "BTU", "PNW", "ASGN", "NOK", "KRC", "WW", "GO", "MNDY", "SJM", "SYM", "VRNS", "AEM", "MHK", "MP", "VITL", "KKR", "PVH", "BBIO", "OGS", "KGC", "GEO", "NSA", "MASI", "CAR", "ABM", "GT", "MDB", "AMR", "CPT", "DAR", "APLD", "LITE", "IRTC", "FIVN", "LUV", "AVA", "HASI", "ARQT", "AVTR", "PRGO", "VTR", "HUBS", "CNX", "MCHP", "ROKU", "RXRX", "CENX", "ALK", "AVAV", "NVAX", "SPB", "DD", "CCI", "FRPT", "FUBO", "DOC", "EQH", "NOG", "AES", "PCG", "WBA", "TENB", "EL", "SMTC", "CUK", "PCOR", "OUST", "Z", "ARE", "SAM", "MIR", "XRAY", "CC", "BCRX", "ADMA", "SLAB", "ACHC", "DBRG", "NLY", "SOUN", "TWLO", "RDNT", "GRPN", "TNXP", "DOW", "CRL", "DINO", "BRZE", "BA", "RGTI", "PL", "UPST", "AGCO", "DLTR", "WK", "AKRO", "KYMR", "VERX", "TEVA", "UUUU", "ESTC", "PGY", "PI", "CE", "GH", "GTLB", "IR", "AAL", "STEP", "SGRY", "HSAI", "VTRS", "ICUI", "STLA", "ILMN", "COMP", "AEVA", "PRCT", "ACHR", "MRVL", "CPRI", "HCTI", "PARR", "NVST", "ALKT", "CWAN", "HTZ", "CYTK", "COMM", "MRCY", "TDOC", "CZR", "AMBA", "IFF", "SNAP", "QBTS", "ALGM", "CALX", "KD", "FL", "ZETA", "SLNO", "GKOS", "INTA", "BEAM", "LUMN", "AI", "ALC", "DNB", "RNA", "HCC", "NOV", "PTEN", "MRUS", "W", "CABO", "RNG", "FRSH", "CCOI", "PAAS", "MBLY", "SATS", "SITM", "KMX", "CFLT", "ENVX", "ALHC", "MAN", "MPW", "TVTX", "SG", "IREN", "INTC", "VSAT", "S", "CRNX", "BAX", "NCNO", "RDW", "CLF", "IOVA", "SUI", "CIFR", "PCT", "PATH", "FOLD", "PTON", "NGD", "RVMD", "AG", "VFC", "MUR", "TWST", "RIG", "AGI", "VERA", "FYBR", "DYN", "GENI", "ALB", "NUVL", "HUN", "ACVA", "ASH", "IRT", "CRSP", "EXAS", "NWL", "QS", "PENN", "SRPT", "ZLAB", "SPR", "ALIT", "JOBY", "RGEN", "WBD", "LCID", "IAC", "NVTS", "AAP", "MDGL", "VERV", "HBI", "APVO", "NIO", "TNDM", "VKTX", "APLS", "ACLX", "RELY", "RUN", "PCVX", "RKT", "U", "AMC", "RARE", "DOCN", "NEOG", "AUR", "TXG", "RHP", "OPEN", "CNR", "LUNR", "JBLU", "ASAN", "RIVN", "COLD", "BB", "ESLT", "NTLA", "DAVE", "JPM", "SEDG", "BTI", "GFL", "TME", "CRDO", "MRNA", "WFC", "CASY", "CLS", "QUBT", "TBBK", "PLUG", "SAN", "FUTU", "MS", "GS", "DB", "PFGC", "SEIC", "SRAD", "STT", "RXO", "MAG", "BMO", "NTRS", "FSK", "CCEP", "TIGO", "C", "IBKR", "COF", "ING", "ATAT", "RCAT", "EWBC", "URTH", "BBAI", "WBS", "BPOP", "BK", "OLLI", "BCS", "MT", "TGB", "SCHW", "BBVA", "UNM", "SF", "APG", "MKL", "OMF", "VNET", "SYF", "TCBI", "RYAAY", "AWK", "NVMI", "L", "RJF", "FERG", "BFH", "GRAB", "STWD", "ONB", "OZK", "UBS", "GRRR", "RNST", "GFI", "LYG", "TSM", "BAP", "BUD", "FNB", "NXT", "FHN", "RF", "CFG", "AER", "RITM", "STNE", "HBAN", "DTM", "ERJ", "FLUT", "CALM", "TTE", "CADE", "EQNR", "ZION", "QFIN", "GRND", "KEY", "GNW", "RY", "MTB", "ASND", "CBSH", "ITUB", "RELX", "TS", "CRBG", "LMND", "NWG", "WTFC", "QGEN", "MLGO", "SE", "ASB", "WRB", "CX", "CFR", "ARES", "PNFP", "HUT", "AXP", "SNV", "WULF", "VOYA", "SPHR", "XPEV", "HIG", "HDB", "PNC", "SHEL", "BKU", "BAM", "AXS", "GSK", "BILI", "WGS", "FCNCA", "NGG", "HMC", "BAC", "VLY", "TPL", "TAK", "CMA", "LDOS", "BTBT", "ALLY", "HWC", "UEC", "CINF", "HOLO", "TFC", "UL", "EOSE", "PLMR", "ACI", "FITB", "MUFG", "YMM", "SSRM", "HIW", "OGE", "MMYT", "USB", "DNN", "KC", "CYBR", "AIG", "UBSI", "IBN", "GLNG", "LNC", "TRV", "BOH", "GL", "CAMT", "BTDR", "MU", "STM", "WAL", "UMBF", "BNS", "PGR", "TPG", "CB", "ARGX", "AZN", "SLG", "SMFG", "THG", "WTM", "HMY", "CHKP", "CNO", "ORI", "ALL", "ZWS", "LEGN", "NTRA", "UMC", "KNSL", "AGO", "NU", "ONON", "AMX", "AIZ", "SSB", "PB", "BANC", "VAL", "MTG", "XP", "ZIM", "AEP", "PFSI", "PBF", "SNY", "MULN", "EH", "ABEV", "MET", "ACGL", "OSCR", "AFL", "AFG", "CHX", "RGA", "GFS", "GGB", "FRO", "WIX", "GBCI", "RIO", "CI", "TAL", "GMAB", "SIGI", "ERIE", "COLB", "PECO", "VIST", "PFG", "POR", "STNG", "NICE", "BHF", "WEX", "FMX", "AUB", "HUM", "MMC", "PBR-A", "TM", "SQM", "RNR", "ARR", "CWST", "RLI", "BIO", "JHX", "CMC", "ADC", "HLN", "PRU", "ESNT", "KMPR", "KNTK", "DHI", "DSGX", "DEO", "EEFT", "INFY", "ATKR", "GLBE", "KBH", "PSA", "JD", "WLK", "LEN", "RH", "FAF", "ELV", "PRGS", "GLOB", "AGNC", "ANET", "TRIP", "SRRK", "ASTS", "XENE", "TOL", "MTH", "BHVN", "SMMT"]
 #tickers = ["KLAC", "NVDA", "NEU", "APH", "MSFT", "UI", "CME", "HLI", "EXEL", "HWM", "LRCX", "APP", "SCCO", "NFLX", "LLY", "EHC", "VRSK", "MCO", "RMD", "ALLE", "CTAS", "META", "CRS", "AGX", "INTU", "HALO", "RCL", "HEI", "CF", "GOOG", "EME", "DRI", "WWD", "TT", "TMUS", "BR", "BAH", "FTDR", "TDG", "FCFS", "CBOE", "VST", "JNJ", "AVGO", "BLK", "EAT", "NTAP", "IESC", "COP", "MTDR", "AIT", "AMAT", "SFM", "CW", "TPR", "STX", "RL", "HIMS", "WTS", "HCA", "NDAQ", "VRT", "AMGN", "COST", "ESE", "ROL", "MPLX", "FAST", "NVT", "CTRA", "BMI", "COR", "MELI", "WING", "NEM", "NSC", "FIX", "LRN", "BWXT", "EXPE", "POWL", "WELL", "SXT", "MA", "UTHR", "GD", "USFD", "PM", "ETN", "QDEL", "EVR", "MDT", "VEEV", "BKNG", "WINA", "FICO", "FSS", "FTNT", "PATK", "LECO", "GILD", "RSG", "MCK", "ICE", "CAKE", "PWR", "PLTR", "ALSN", "IPAR", "HESM", "GWW", "SYY", "ITW", "AWI", "PKG", "IBM", "QCOM", "CSCO", "CAH", "ITT", "LII", "DPZ", "URI", "TXRH", "TXN", "MO", "GSHD", "EBAY", "AJG", "FTI", "MSI", "ZTS", "CTRE", "IMO", "IDXX", "ORCL", "ITRI", "DY", "V", "GRMN", "PPC", "SPGI", "LEU", "UBER", "ALV", "LNG", "ADP", "SNPS", "TGLS", "GE", "PRIM", "UNP", "BSY", "MWA", "AXON", "TRGP", "EA", "ABT", "PH", "WAB", "FFIV", "JCI", "LIN", "VRSN", "MPWR", "TEL", "HD", "MAR", "MORN", "CACC", "NYT", "UHS", "QLYS", "SSNC", "CPRX", "LCII", "CL", "JBL", "OVV", "BX", "PJT", "YUM", "CVNA", "NXST", "FOX", "RRR", "DTE", "NTES", "WM", "LMT", "ACN", "DGX", "ROP", "MRK", "UGI", "BYD", "CR", "XOM", "DUOL", "MCD", "NDSN", "KTB", "LAD"]
@@ -176,7 +174,6 @@ def nearest_psd_matrix(matrix):
 
 
 # --- Deep Dive Data Functions (for UI) ---
-# (Keeping your existing deep dive functions)
 @st.cache_data
 def fetch_and_organize_deep_dive_data(_ticker_symbol):
     try:
@@ -234,14 +231,47 @@ def fetch_and_organize_deep_dive_data(_ticker_symbol):
             df_display = df.copy()
             df_display.index.name = "Metric"
             df_display.columns = [d.strftime('%Y-%m-%d') for d in df_display.columns]
-            return df_display.applymap(lambda x: f'{x:,.0f}' if isinstance(x, (int, float)) else x)
+            # FIX: Replaced deprecated .applymap() with .map()
+            return df_display.map(lambda x: f'{x:,.0f}' if isinstance(x, (int, float)) else x)
         return {
             "Price Data": price_data, "Performance": perf_data, "Key Ratios (TTM)": ratios_ttm,
             "Income Statement": statement_to_df(financials), "Balance Sheet": statement_to_df(balance_sheet),
             "Cash Flow": statement_to_df(cashflow),
         }
     except Exception as e: return {"Error": f"An error occurred: {e}"}
+# --- NEW FUNCTION FOR TWO-STAGE REGRESSION ---
+def estimate_idiosyncratic_variances(asset_returns_df, factor_loadings_df, factor_returns_df):
+    """
+    Estimates the idiosyncratic variance for each asset after a factor regression.
+    
+    Args:
+        asset_returns_df (pd.DataFrame): DataFrame of asset returns (stocks in rows, time in columns).
+        factor_loadings_df (pd.DataFrame): DataFrame of factor loadings (stocks in rows, factors in columns).
+        factor_returns_df (pd.DataFrame): DataFrame of factor returns (factors in rows, time in columns).
 
+    Returns:
+        pd.Series: A series of annualized idiosyncratic variances for each asset.
+    """
+    # Align all dataframes on common stocks and dates
+    common_stocks = asset_returns_df.index.intersection(factor_loadings_df.index)
+    common_dates = asset_returns_df.columns.intersection(factor_returns_df.columns)
+    
+    asset_returns = asset_returns_df.loc[common_stocks, common_dates]
+    loadings = factor_loadings_df.loc[common_stocks]
+    factor_returns = factor_returns_df.loc[:, common_dates]
+
+    # Calculate the model-explained returns
+    explained_returns = loadings.dot(factor_returns)
+    
+    # Residuals are the part of the return NOT explained by the model
+    residuals = asset_returns - explained_returns
+    
+    # Idiosyncratic variance is the variance of these residuals
+    # We calculate variance across time (axis=1) for each stock
+    idio_variances = residuals.var(axis=1) * 252 # Annualize
+    
+    return idio_variances.fillna(idio_variances.median())
+    
 def display_deep_dive_data(ticker_symbol):
     data = fetch_and_organize_deep_dive_data(ticker_symbol)
     if "Error" in data:
@@ -263,7 +293,7 @@ def fetch_etf_history(ticker, period="3y"):
     history = yf.Ticker(ticker).history(period=period, auto_adjust=True, interval="1d")
     if history.empty or 'Close' not in history.columns: raise ValueError(f"No valid data for {ticker}")
     history.index = history.index.tz_localize(None)
-    history.dropna(subset=['Close'], inplace=True)
+    history.dropna(subset=['Close'], inplace=True) # This inplace is safe, not on a chained copy
     if history['Close'].eq(0).any(): raise ValueError(f"Zero Close prices for {ticker}")
     return history
 
@@ -291,7 +321,7 @@ def fetch_ticker_data(ticker_symbol):
     quarterly_cashflow = ticker.quarterly_cashflow
     return ticker, history, info, financials, balancesheet, cashflow, quarterly_financials, quarterly_balancesheet, quarterly_cashflow
 
-# --- START: NEWLY ADDED/MODIFIED QUANTITATIVE FUNCTIONS ---
+# --- Quantitative Functions ---
 
 def calculate_mahalanobis_metrics(returns, cov_matrix, periods=252):
     """
@@ -336,8 +366,7 @@ def calculate_idiosyncratic_variance(returns_df, factor_returns_df, betas):
     except Exception as e:
         logging.error(f"Error in idiosyncratic variance calculation: {e}")
         return pd.Series(0.0, index=returns_df.columns, name='IdioVariance')
-# PASTE THIS CORRECTED VERSION OVER THE OLD ONE
-# PASTE THIS CORRECTED VERSION OVER THE OLD ONE
+
 def calculate_fmp_weights(returns_df, new_factor_returns, cov_matrix, existing_factors_returns=None):
     """
     Calculates CORRECTED Factor-Mimicking Portfolio (FMP) weights.
@@ -371,7 +400,6 @@ def calculate_fmp_weights(returns_df, new_factor_returns, cov_matrix, existing_f
             betas.append(model.coef_[0])
         B = np.array(betas) # This is now a 1D array
 
-        # --- CRITICAL LOGIC FIX ---
         # The correct FMP formula is w ∝ Σ⁻¹ * β
         raw_weights = precision_matrix @ B
         
@@ -388,6 +416,7 @@ def calculate_fmp_weights(returns_df, new_factor_returns, cov_matrix, existing_f
     except Exception as e:
         logging.error(f"Error in FMP calculation: {e}")
         return pd.Series(np.ones(len(returns_df.columns)) / len(returns_df.columns), index=returns_df.columns)
+
 def calculate_information_metrics(forecasted_alphas_ts, realized_returns_ts):
     """
     Calculate Information Coefficient (IC) and Information Ratio (IR).
@@ -453,14 +482,10 @@ def calculate_log_log_utility(returns):
 def calculate_log_log_sharpe(returns, window=252, risk_free_rate=0.04):
     if returns.empty or len(returns) < window: return np.nan
     try:
-        # FIX: Clip returns to prevent values <= -1 from breaking log1p
-        # A value of -0.99999 represents a near-total loss without being mathematically invalid.
         safe_returns = returns[-window:].clip(lower=-0.99999)
-        
-        log_returns = np.log1p(safe_returns) # Now using the cleaned data
-        
+        log_returns = np.log1p(safe_returns)
         log_log_returns = np.log1p(log_returns[log_returns > 0])
-        if log_log_returns.empty or log_log_returns.isna().all(): return np.nan # Added check for all NaNs
+        if log_log_returns.empty or log_log_returns.isna().all(): return np.nan
         
         mean_return = log_log_returns.mean() * 252
         std_return = log_log_returns.std() * np.sqrt(252)
@@ -493,7 +518,7 @@ def calculate_ar_coefficient(returns, lags=1, window=252):
         y = returns[-effective_window:].iloc[1:].reindex(X.index)
         if len(X) < 10: return np.nan
         slope, _, _, p_value, _ = linregress(X, y)
-        return slope if p_value < 0.1 and np.isfinite(slope) else 0.0 # Relaxed p-value
+        return slope if p_value < 0.1 and np.isfinite(slope) else 0.0
     except Exception: return 0.0
 
 def breakout(price, lookback=20, smooth=5):
@@ -505,98 +530,70 @@ def breakout(price, lookback=20, smooth=5):
     smoothed_output = output.ewm(span=smooth, min_periods=smooth//2).mean()
     scaled_output = (smoothed_output + 40.0) / 80.0
     return scaled_output.iloc[-1] if not scaled_output.empty else np.nan
-# PASTE THIS CORRECTED VERSION OVER THE OLD ONE
-# PASTE THIS CORRECTED VERSION OVER THE OLD ONE
-def calculate_volatility_adjusted_z_score(prices, period=252, ticker="Unknown", metric="Z-score", sector=None):
-    """
-    Calculates a robust Z-score for a price series, adjusted for volatility and sector.
-    This function is designed to be resilient to outliers by using the median and
-    Median Absolute Deviation (MAD) instead of the mean and standard deviation.
-    """
-    if prices.empty or prices.isna().any() or (prices <= 0).any():
-        logging.warning(f"Invalid price data for {metric} calculation (Ticker: {ticker}): empty, contains NaN, or non-positive values")
-        return np.nan
 
+def calculate_volatility_adjusted_z_score(prices, period=252, ticker="Unknown", metric="Z-score", sector=None):
+    if prices.empty or prices.isna().any() or (prices <= 0).any():
+        logging.error(f"Invalid price data for {metric} calculation (Ticker: {ticker}): empty, contains NaN, or non-positive values")
+        return np.nan
     data_length = len(prices)
     min_period = 200
     if data_length < min_period:
-        logging.warning(f"Insufficient data length for {metric} calculation (Ticker: {ticker}): {data_length} < {min_period} days")
+        logging.error(f"Insufficient data length for {metric} calculation (Ticker: {ticker}): {data_length} < {min_period} days")
         return np.nan
 
     daily_returns = np.log(prices / prices.shift(1)).dropna()
-    current_vol = daily_returns.tail(63).std() * np.sqrt(252)
+    current_vol = daily_returns.std() * np.sqrt(252)
     historical_vol = daily_returns.rolling(window=252).std().mean() * np.sqrt(252) if data_length >= 252 else current_vol
     vol_factor = current_vol / historical_vol if historical_vol > 0 else 1.0
-    adaptive_window = int(min(max(126, period / vol_factor), 504))
+    adaptive_window = int(min(max(126, 252 * (1 + vol_factor)), 504))
     use_length = min(data_length, adaptive_window)
     logging.info(f"Calculating {metric} for {ticker} with adaptive window {use_length} days (vol_factor: {vol_factor:.2f})")
 
     sector_adjustment = 1.0
-    if sector:
-        if sector in ['Technology', 'Healthcare']:
-            sector_adjustment = 0.9
-        elif sector in ['Utilities', 'Real Estate']:
-            sector_adjustment = 1.1
+    if sector in sector_etf_map:
+        sector_adjustment = 0.9 if sector in ['Technology', 'Healthcare'] else 1.1 if sector in ['Utilities', 'Real Estate'] else 1.0
 
     y = np.log(prices[-use_length:]).values
     median_y = np.median(y)
     mad = np.median(np.abs(y - median_y))
-
     if mad == 0 or np.isnan(mad):
         logging.warning(f"Zero or NaN MAD in {metric} calculation for {ticker}")
         return np.nan
 
-    robust_std_estimate = mad / 0.6745
-    adjusted_denominator = robust_std_estimate * vol_factor * sector_adjustment
-    robust_z = (y[-1] - median_y) / adjusted_denominator
+    vol_scaling = current_vol / (historical_vol if historical_vol > 0 else 1.0)
+    robust_z = 0.6745 * (y[-1] - median_y) / (mad * vol_scaling * sector_adjustment)
 
-    # The flawed thresholding logic has been removed.
+    z_threshold = np.mean(robust_z) + 1.5 * np.std(robust_z)
+    if abs(robust_z) > z_threshold:
+        logging.info(f"{metric} for {ticker} exceeds dynamic threshold {z_threshold:.2f}: {robust_z:.2f}")
+
     return robust_z
+
 def recalculate_relative_z_scores(top_15_df, etf_histories, period="3y", window=252, min_window=200):
     """
     Recalculates relative Z-scores for a list of stocks against their benchmark ETFs.
-
-    This function iterates through a DataFrame of stocks, computes their relative
-    price series against a specified benchmark ETF, and then uses the
-    `calculate_volatility_adjusted_z_score` function to get the final score.
-
-    Args:
-        top_15_df (pd.DataFrame): DataFrame containing stock information. Must have
-                                  'Ticker', 'Best_Factor', and 'Sector' columns.
-        etf_histories (dict): A dictionary where keys are ETF tickers and values are
-                              DataFrames of their historical price data.
-        period (str): The historical data period to fetch (e.g., "3y").
-        window (int): The maximum number of days for the relative calculation.
-        min_window (int): The minimum number of overlapping days required.
-
-    Returns:
-        list: A list of calculated relative Z-scores, with np.nan for any failures.
     """
     relative_z_scores = []
     for idx, row in top_15_df.iterrows():
         ticker = row['Ticker']
         best_factor = row['Best_Factor']
-        sector = row['Sector'] # Get sector from the dataframe
+        sector = row['Sector']
         try:
             logging.info(f"Recalculating Z-Score for {ticker}, Best_Factor: {best_factor}")
             
-            # Fetch stock history and get pre-fetched ETF history
             history = yf.Ticker(ticker).history(period=period, auto_adjust=True, interval="1d").tz_localize(None)
             etf_history = etf_histories.get(best_factor)
 
             if not history.empty and etf_history is not None and not etf_history.empty:
-                # Align timezones and find common date range
                 etf_history = etf_history.copy()
                 etf_history.index = etf_history.index.tz_localize(None)
                 common_index = history.index.intersection(etf_history.index)[-window:]
 
                 if len(common_index) >= min_window:
-                    # Create aligned price series and calculate relative strength
                     aligned_stock = history['Close'][common_index]
                     aligned_etf = etf_history['Close'][common_index]
                     relative = aligned_stock / aligned_etf
                     
-                    # Validate relative series before calculating Z-score
                     if not relative.isna().any() and (relative > 0).all() and np.isfinite(relative).all():
                         z_score = calculate_volatility_adjusted_z_score(relative, period=len(common_index), ticker=ticker, sector=sector)
                         relative_z_scores.append(z_score)
@@ -615,6 +612,7 @@ def recalculate_relative_z_scores(top_15_df, etf_histories, period="3y", window=
             logging.error(f"Error recalculating Z-Score for {ticker}: {str(e)}")
             
     return relative_z_scores    
+
 def calculate_piotroski_f_score(financials, balancesheet, cashflow, total_assets, roa, net_income):
     score = 0
     try:
@@ -655,7 +653,73 @@ def calculate_lo_modified_variance(sub_series, q):
         autocovariance_sum += weight * autocovariances[j]
     modified_var = sample_var + 2.0 * autocovariance_sum
     return max(0.0, modified_var)
+# --- NEW FUNCTION: WINSORIZATION OF RETURNS (FROM BOOK EXCERPT) ---
+def winsorize_returns(returns_dict, lookback_T=126, d_max=7.0):
+    """
+    Winsorizes returns based on the robust z-score method described in
+    "The Elements of Quantitative Investing".
 
+    d_{i,t} = |log(1 + r_it)| / median(|log(1 + r_{i,t-1})|, ..., |log(1 + r_{i,t-T})|)
+
+    Args:
+        returns_dict (dict): Dictionary where keys are tickers and values are pd.Series of log returns.
+        lookback_T (int): The lookback period (T) for the rolling median.
+        d_max (float): The threshold. Returns whose score exceeds this are capped.
+
+    Returns:
+        dict: A new dictionary with the winsorized log return series.
+    """
+    winsorized_dict = {}
+    total_winsorized_points = 0
+
+    for ticker, log_returns in returns_dict.items():
+        if log_returns.empty or len(log_returns) < lookback_T:
+            winsorized_dict[ticker] = log_returns
+            continue
+
+        # Use simple returns for the formula's r_it component
+        simple_returns = np.expm1(log_returns)
+        
+        # Calculate the absolute log returns for the median calculation
+        abs_log_returns = log_returns.abs()
+        
+        # Calculate the rolling median denominator from the formula
+        rolling_median_denom = abs_log_returns.rolling(window=lookback_T, min_periods=20).median().shift(1)
+        
+        # Avoid division by zero
+        rolling_median_denom.replace(0, np.nan, inplace=True)
+        rolling_median_denom.fillna(method='ffill', inplace=True)
+        rolling_median_denom.fillna(abs_log_returns.median(), inplace=True) # Backfill initial NaNs
+
+        # Calculate the d_it score for each point in time
+        d_it = abs_log_returns / rolling_median_denom
+        
+        # Identify outliers
+        outliers_mask = d_it > d_max
+        
+        if outliers_mask.any():
+            total_winsorized_points += outliers_mask.sum()
+            
+            # Create a copy to modify
+            winsorized_returns_series = log_returns.copy()
+            
+            # For each outlier, calculate the capped value
+            # Capped |log(1+r)| = d_max * median(...)
+            cap_value = d_max * rolling_median_denom[outliers_mask]
+            
+            # Preserve the original sign of the outlier return
+            signed_cap = np.sign(log_returns[outliers_mask]) * cap_value
+            
+            # Apply the cap
+            winsorized_returns_series[outliers_mask] = signed_cap
+            
+            winsorized_dict[ticker] = winsorized_returns_series
+        else:
+            # No outliers, just use the original series
+            winsorized_dict[ticker] = log_returns
+            
+    logging.info(f"Winsorization complete. Capped {total_winsorized_points} outlier data points across all tickers.")
+    return winsorized_dict
 def calculate_hurst_lo_modified(series, min_n=10, max_n=None, q_method='auto'):
     if isinstance(series, pd.Series): series = series.values
     series = series[~np.isnan(series)]
@@ -699,7 +763,6 @@ def calculate_hurst_lo_modified(series, min_n=10, max_n=None, q_method='auto'):
         return hurst, results_df
     except Exception: return np.nan, pd.DataFrame()
 
-# --- FIX: THIS IS THE COMPLETE AND CORRECTED FUNCTION. REPLACE THE EXISTING ONE. ---
 def process_single_ticker(ticker_symbol, etf_histories, sector_etf_map):
     try:
         _, history, info, financials, balancesheet, cashflow, _, _, _ = fetch_ticker_data(ticker_symbol)
@@ -710,15 +773,11 @@ def process_single_ticker(ticker_symbol, etf_histories, sector_etf_map):
             failed_data['Name'] = f"{ticker_symbol} (Failed to fetch)"
             return [failed_data.get(col) for col in columns], pd.Series()
 
-        # 1. Initialize a dictionary with all column names
         data = {col: np.nan for col in columns}
-        
-        # 2. Populate the dictionary by key, ensuring no misalignment
         data['Ticker'] = ticker_symbol
         data['Name'] = info.get('longName', 'N/A')
         data['Sector'] = info.get('sector', 'Unknown')
         
-        # --- Basic Info & Financial Data Extraction ---
         data['Market_Cap'] = info.get('marketCap')
         data['Dividend_Yield'] = info.get('dividendYield', 0) * 100
         data['PE_Ratio'] = info.get('trailingPE')
@@ -750,7 +809,6 @@ def process_single_ticker(ticker_symbol, etf_histories, sector_etf_map):
         buybacks = get_value(cashflow, ['Repurchase Of Capital Stock', 'RepurchaseOfStock']) or 0
         fcf = (operating_cash_flow if pd.notna(operating_cash_flow) else 0) + (capex if pd.notna(capex) else 0)
 
-        # --- Ratio Calculations ---
         data['Current_Ratio'] = current_assets / current_liabilities if current_liabilities and current_liabilities > 0 else np.nan
         data['Quick_Ratio'] = (current_assets - inventory) / current_liabilities if current_liabilities and current_liabilities > 0 else np.nan
         data['Debt_Ratio'] = total_liabilities / total_assets if total_assets and total_assets > 0 else np.nan
@@ -783,7 +841,6 @@ def process_single_ticker(ticker_symbol, etf_histories, sector_etf_map):
         data['ROIC'] = (nopat / invested_capital) * 100 if invested_capital and invested_capital > 0 else np.nan
         data['Cash_ROIC'] = (fcf / invested_capital) * 100 if invested_capital and invested_capital > 0 else np.nan
         
-        # --- Time-series, Technicals, and Factor Calculations ---
         log_returns = pd.Series()
         if not history.empty and 'Close' in history.columns:
             log_returns = np.log(history['Close'] / history['Close'].shift(1)).dropna()
@@ -808,7 +865,6 @@ def process_single_ticker(ticker_symbol, etf_histories, sector_etf_map):
                         slope, _, _, _, _ = linregress(spy_returns[common_idx], log_returns[common_idx])
                         data['Beta_to_SPY'] = slope
                 
-                # --- THIS IS THE CRITICAL LOGIC BLOCK THAT WAS RESTORED ---
                 rolling_correlations = {}
                 for etf, etf_history in etf_histories.items():
                     if etf_history is not None and not etf_history.empty:
@@ -834,7 +890,6 @@ def process_single_ticker(ticker_symbol, etf_histories, sector_etf_map):
         data.update({f"Return_{p}d": returns_perf.get(f"Return_{p}d") for p in [21, 63, 126, 252]})
         data['Growth'] = data.get('Sales_Growth_YOY')
         
-        # --- RESTORED LOGIC for other scores ---
         data['Q_Score'] = min(data.get('Quick_Ratio', 0) / 5.0, 1.0) if pd.notna(data.get('Quick_Ratio')) and data.get('Quick_Ratio') > 0 else 0.0
         data['Coverage_Score'] = min(data.get('Interest_Coverage', 0) / 10.0, 1.0) if pd.notna(data.get('Interest_Coverage')) and data.get('Interest_Coverage') > 0 else 0.0
         
@@ -853,9 +908,6 @@ def process_single_ticker(ticker_symbol, etf_histories, sector_etf_map):
         valid_profit_metrics = [m for m in profit_metrics if pd.notna(m)]
         data['Profitability_Factor'] = min(np.mean(valid_profit_metrics) / 100.0, 1.0) if valid_profit_metrics else 0.0
         
-        # --- END OF RESTORED LOGIC ---
-        
-        # 3. Build the final list in the correct order using the master `columns` list
         result_list = [data.get(col) for col in columns]
         return result_list, log_returns
 
@@ -866,7 +918,6 @@ def process_single_ticker(ticker_symbol, etf_histories, sector_etf_map):
         failed_data['Name'] = f"{ticker_symbol} (Processing Error)"
         return [failed_data.get(col) for col in columns], pd.Series()
 
-# --- FIX: Replaced this entire function to fix the 'inplace' warning and improve cleaning ---
 @st.cache_data
 def process_tickers(_tickers, _etf_histories, _sector_etf_map):
     results, returns_dict, failed_tickers = [], {}, []
@@ -876,7 +927,7 @@ def process_tickers(_tickers, _etf_histories, _sector_etf_map):
             ticker = future_to_ticker[future]
             try:
                 result, returns = future.result()
-                if result and pd.notna(result[1]):  # Check if Name is not NaN
+                if result and pd.notna(result[1]):
                     results.append(result)
                     if returns is not None and not returns.empty:
                         returns_dict[ticker] = returns
@@ -894,66 +945,54 @@ def process_tickers(_tickers, _etf_histories, _sector_etf_map):
     numeric_cols = [c for c in columns if c not in ['Ticker', 'Name', 'Sector', 'Best_Factor', 'Risk_Flag']]
     results_df[numeric_cols] = results_df[numeric_cols].apply(pd.to_numeric, errors='coerce')
     
-    # Corrected data cleaning loop to avoid 'inplace' on a copy
     for col in results_df.select_dtypes(include=np.number).columns:
         if results_df[col].isna().all():
             results_df[col] = 0.0
         else:
             median_val = results_df[col].median()
-            # The correct way: reassign the column
+            # FIX: Replaced chained inplace assignment with direct assignment
             results_df[col] = results_df[col].fillna(median_val)
 
         if results_df[col].var() < 1e-8: 
             results_df[col] += np.random.normal(0, 0.01, len(results_df))
     
     return results_df.infer_objects(copy=False), failed_tickers, returns_dict
+
 def simulate_historical_pure_returns(pure_returns_today):
     """
     SIMULATES a history of past Pure Factor Return tables.
-    In a real system, you would load this from a database or CSV.
     """
     if pure_returns_today is None:
         return []
     
     historical_data = []
     for i in range(12): # Simulate 12 past "monthly" runs
-        # Create a noisy, slightly different version for past months
         noise = np.random.normal(0, 0.5, len(pure_returns_today))
-        drift = (12 - i) / 12 * 0.1 # Make older data slightly different
+        drift = (12 - i) / 12 * 0.1
         simulated_series = pure_returns_today + noise + drift
         historical_data.append(simulated_series)
         
-    historical_data.append(pure_returns_today) # Add today's data
+    historical_data.append(pure_returns_today)
     return historical_data
 
 
 def analyze_coefficient_stability(historical_data):
     """
     Analyzes the stability of factor coefficients over time to find the most robust factors.
-    This is the core of the new strategy.
     """
     if not historical_data:
         return pd.DataFrame()
 
-    # Combine all historical Series into one DataFrame
     df = pd.concat(historical_data, axis=1)
     df.columns = [f'run_{i}' for i in range(len(df.columns))]
     
-    # Calculate stability metrics for each factor
     stability_metrics = pd.DataFrame(index=df.index)
     stability_metrics['mean_coeff'] = df.mean(axis=1)
     stability_metrics['std_coeff'] = df.std(axis=1)
-    
-    # Calculate the percentage of times the coefficient was positive
     stability_metrics['pct_positive'] = (df > 0).sum(axis=1) / len(df.columns)
-    
-    # Calculate the Sharpe Ratio of the coefficient (our "Stability Score")
-    # This is the signal-to-noise ratio of the factor itself.
-    # Use a small epsilon to avoid division by zero for perfectly stable (but useless) factors.
     stability_metrics['sharpe_ratio_coeff'] = stability_metrics['mean_coeff'] / (stability_metrics['std_coeff'] + 1e-6)
     
     return stability_metrics.sort_values(by='sharpe_ratio_coeff', key=abs, ascending=False)
-
 
 def set_weights_from_stability(stability_df, all_metrics, reverse_metric_map):
     """
@@ -962,17 +1001,14 @@ def set_weights_from_stability(stability_df, all_metrics, reverse_metric_map):
     if stability_df.empty or 'sharpe_ratio_coeff' not in stability_df.columns:
         return {metric: 0.0 for metric in all_metrics}, pd.DataFrame()
 
-    # The weight is directly proportional to the absolute value of the stability score
     scores = stability_df['sharpe_ratio_coeff'].abs()
     
-    # Normalize scores to sum to 100
     total_score = scores.sum()
     if total_score == 0:
         return {metric: 0.0 for metric in all_metrics}, stability_df
 
     final_weights = (scores / total_score) * 100
     
-    # Build final dictionary
     final_weights_dict = {metric: 0.0 for metric in all_metrics}
     for short_name, weight in final_weights.items():
         long_name = METRIC_NAME_MAP.get(short_name, short_name)
@@ -980,47 +1016,10 @@ def set_weights_from_stability(stability_df, all_metrics, reverse_metric_map):
             final_weights_dict[long_name] = weight
             
     stability_df['Final_Weight'] = final_weights
-    stability_df.fillna(0, inplace=True)
+    stability_df.fillna(0, inplace=True) # This inplace is safe
     
     return final_weights_dict, stability_df
-def calculate_volatility_adjusted_z_score(prices, period=252, ticker="Unknown", metric="Z-score", sector=None):
-    if prices.empty or prices.isna().any() or (prices <= 0).any():
-        logging.error(f"Invalid price data for {metric} calculation (Ticker: {ticker}): empty, contains NaN, or non-positive values")
-        return np.nan
-    data_length = len(prices)
-    min_period = 200
-    if data_length < min_period:
-        logging.error(f"Insufficient data length for {metric} calculation (Ticker: {ticker}): {data_length} < {min_period} days")
-        return np.nan
 
-    daily_returns = np.log(prices / prices.shift(1)).dropna()
-    current_vol = daily_returns.std() * np.sqrt(252)
-    historical_vol = daily_returns.rolling(window=252).std().mean() * np.sqrt(252) if data_length >= 252 else current_vol
-    vol_factor = current_vol / historical_vol if historical_vol > 0 else 1.0
-    adaptive_window = int(min(max(126, 252 * (1 + vol_factor)), 504))
-    use_length = min(data_length, adaptive_window)
-    logging.info(f"Calculating {metric} for {ticker} with adaptive window {use_length} days (vol_factor: {vol_factor:.2f})")
-
-    sector_adjustment = 1.0
-    if sector in sector_etf_map:
-        sector_adjustment = 0.9 if sector in ['Technology', 'Healthcare'] else 1.1 if sector in ['Utilities', 'Real Estate'] else 1.0
-
-    y = np.log(prices[-use_length:]).values
-    median_y = np.median(y)
-    mad = np.median(np.abs(y - median_y))
-    if mad == 0 or np.isnan(mad):
-        logging.warning(f"Zero or NaN MAD in {metric} calculation for {ticker}")
-        return np.nan
-
-    vol_scaling = current_vol / (historical_vol if historical_vol > 0 else 1.0)
-    robust_z = 0.6745 * (y[-1] - median_y) / (mad * vol_scaling * sector_adjustment)
-
-    z_threshold = np.mean(robust_z) + 1.5 * np.std(robust_z)
-    if abs(robust_z) > z_threshold:
-        logging.info(f"{metric} for {ticker} exceeds dynamic threshold {z_threshold:.2f}: {robust_z:.2f}")
-
-    return robust_z
-# --- Multicollinearity and Pure Returns (Stagewise-inspired Robust Regression) ---
 def check_multicollinearity(X, characteristics, vif_threshold=10):
     if X.empty or X.shape[1] < 2: return characteristics
     X_clean = X.copy().replace([np.inf, -np.inf], np.nan).fillna(X.median())
@@ -1041,17 +1040,14 @@ def check_multicollinearity(X, characteristics, vif_threshold=10):
         high_vif_features = vif_data[vif_data['VIF'] > vif_threshold]['feature'].tolist()
         return [c for c in characteristics_filtered if c not in high_vif_features]
     except Exception: return characteristics_filtered
-# --- FIX: Replaced this entire function to correct two critical bugs ---
-# --- FIX: Replaced this entire function to correct two critical bugs ---
+
 def calculate_portfolio_factor_correlations(weighted_df, etf_histories, period="3y", min_days=240):
     """
     Calculates the correlation of a weighted portfolio's returns against a list of ETF returns.
-    This version is robust and efficient.
     """
     logging.info("Starting robust portfolio factor correlations calculation")
     correlations = pd.Series(dtype=float)
 
-    # Step 1: Compute the weighted portfolio returns series once
     portfolio_returns = None
     if 'Weight' not in weighted_df.columns or weighted_df.empty:
         logging.warning("Weighted DataFrame is empty or missing 'Weight' column.")
@@ -1065,7 +1061,7 @@ def calculate_portfolio_factor_correlations(weighted_df, etf_histories, period="
             if history.empty or 'Close' not in history.columns:
                 continue
 
-            # Calculate returns for each asset in the portfolio
+            # FIX: Set fill_method to None to resolve FutureWarning
             returns = history['Close'].pct_change(fill_method=None).dropna()
 
             if returns.empty:
@@ -1081,31 +1077,27 @@ def calculate_portfolio_factor_correlations(weighted_df, etf_histories, period="
 
     if portfolio_returns is None or portfolio_returns.empty:
         logging.error("Failed to compute portfolio returns for factor correlation.")
-        return correlations # Return an empty series
+        return correlations
 
     portfolio_returns = portfolio_returns.dropna()
 
-    # Step 2: Compute correlations with each ETF
     for etf, etf_history in etf_histories.items():
         if etf_history.empty or 'Close' not in etf_history.columns:
             continue
         try:
-            # Calculate returns ONLY for the current ETF in the loop
+            # FIX: Set fill_method to None to resolve FutureWarning
             etf_returns = etf_history['Close'].pct_change(fill_method=None).dropna()
 
             if etf_returns.empty:
                 continue
-
-            # Find common dates between the pre-calculated portfolio and the current ETF
+            
             common_index = portfolio_returns.index.intersection(etf_returns.index)
             if len(common_index) < min_days:
                 continue
                 
-            # Align the two series to the common index for correlation
             aligned_portfolio = portfolio_returns.loc[common_index]
             aligned_etf = etf_returns.loc[common_index]
 
-            # Calculate and store the correlation
             corr = aligned_portfolio.corr(aligned_etf)
             if np.isfinite(corr):
                 correlations[etf] = corr
@@ -1114,11 +1106,11 @@ def calculate_portfolio_factor_correlations(weighted_df, etf_histories, period="
             logging.error(f"Error calculating correlation for ETF {etf}: {e}")
             continue
             
-    # Fallback to SPY if no other correlations could be calculated
     if correlations.empty:
         logging.warning("No valid correlations computed, falling back to SPY")
         spy_history = etf_histories.get('SPY')
         if spy_history is not None and not spy_history.empty:
+            # FIX: Set fill_method to None to resolve FutureWarning
             spy_returns = spy_history['Close'].pct_change(fill_method=None).dropna()
             common_index = portfolio_returns.index.intersection(spy_returns.index)
             if len(common_index) >= min_days:
@@ -1128,27 +1120,23 @@ def calculate_portfolio_factor_correlations(weighted_df, etf_histories, period="
                 correlations['SPY'] = 0.5
     
     return correlations.sort_values(ascending=False)
-# --- This is the NEW function to add/replace the old one ---
+
 def aggregate_stability_and_set_weights(stability_results, all_metrics, reverse_metric_map):
     """
     Aggregates stability metrics from multiple time horizons and sets final portfolio weights.
-    Weights are based on a combination of average signal strength (sharpe ratio) and consistency across horizons.
     """
     if not stability_results:
         return {metric: 0.0 for metric in all_metrics}, pd.DataFrame()
 
-    # Consolidate all factors from all horizons
     all_factors = set()
     for horizon, df in stability_results.items():
         all_factors.update(df.index)
 
-    # Create the aggregated rationale DataFrame
     agg_df = pd.DataFrame(index=list(all_factors))
     agg_df['avg_sharpe_coeff'] = 0.0
-    agg_df['consistency_score'] = 0.0 # How often the sign matches the average sign
+    agg_df['consistency_score'] = 0.0
     agg_df['horizons_present'] = 0
 
-    # Aggregate metrics for each factor
     for factor in agg_df.index:
         sharpes = []
         for horizon, df in stability_results.items():
@@ -1162,7 +1150,6 @@ def aggregate_stability_and_set_weights(stability_results, all_metrics, reverse_
         agg_df.loc[factor, 'avg_sharpe_coeff'] = avg_sharpe
         agg_df.loc[factor, 'horizons_present'] = len(sharpes)
 
-        # Calculate consistency: % of times the sharpe had the same sign as the average
         if avg_sharpe != 0:
             sign_of_avg = np.sign(avg_sharpe)
             same_sign_count = sum(1 for s in sharpes if np.sign(s) == sign_of_avg)
@@ -1170,19 +1157,15 @@ def aggregate_stability_and_set_weights(stability_results, all_metrics, reverse_
         else:
             agg_df.loc[factor, 'consistency_score'] = 0.0
 
-    # Calculate final score: reward both magnitude and consistency
-    # We use a power on consistency to heavily reward factors that work across all horizons
     agg_df['Final_Score'] = agg_df['avg_sharpe_coeff'].abs() * (agg_df['consistency_score'] ** 2)
     agg_df = agg_df.sort_values('Final_Score', ascending=False).fillna(0)
     
-    # Normalize scores to get final weights
     total_score = agg_df['Final_Score'].sum()
     if total_score > 0:
         agg_df['Final_Weight'] = (agg_df['Final_Score'] / total_score) * 100
     else:
         agg_df['Final_Weight'] = 0.0
 
-    # Build the final dictionary for all possible metrics
     final_weights_dict = {metric: 0.0 for metric in all_metrics}
     for short_name, row in agg_df.iterrows():
         long_name = METRIC_NAME_MAP.get(short_name, short_name)
@@ -1190,126 +1173,147 @@ def aggregate_stability_and_set_weights(stability_results, all_metrics, reverse_
             final_weights_dict[long_name] = row['Final_Weight']
             
     return final_weights_dict, agg_df    
-# REPLACE this entire function in your code
-def calculate_pure_returns(df, characteristics, target='Return_252d', vif_threshold=5, use_pca=True, pca_variance_threshold=0.95):
+
+def calculate_pure_returns(df, characteristics, target='Return_252d', idio_variances=None, vif_threshold=5, use_pca=True, pca_variance_threshold=0.95):
     """
-    Calculates pure factor returns using a robust cross-sectional regression.
-    This version uses PCA to handle severe multicollinearity, preventing LinAlgWarning.
+    Calculates pure factor returns using a robust cross-sectional regression with PCA.
+    Can perform Weighted Least Squares (WLS) if idiosyncratic variances are provided,
+    as recommended in advanced quantitative modeling literature.
+
+    Args:
+        df (pd.DataFrame): The dataframe containing all stock data and characteristics.
+        characteristics (list): A list of column names to be used as factors (X variables).
+        target (str): The column name for the dependent variable (y variable, e.g., 'Return_252d').
+        idio_variances (pd.Series, optional): A series of idiosyncratic variances for each stock,
+                                              indexed by Ticker. If provided, WLS is performed.
+                                              Defaults to None, resulting in an OLS-type regression.
+        vif_threshold (int): The threshold for the Variance Inflation Factor to remove multicollinear features.
+        use_pca (bool): Whether to use Principal Component Analysis to create orthogonal factors.
+        pca_variance_threshold (float): The cumulative variance to be explained by the PCA components.
+
+    Returns:
+        pd.Series: A series of pure factor returns (the regression coefficients), indexed by the factor name.
+                   Returns an empty series if the calculation fails.
     """
     if df.empty or target not in df.columns or df[target].isnull().all():
+        logging.warning("Pure returns calculation skipped: Input DataFrame is empty or target column is invalid.")
         return pd.Series(dtype=float, name="PureReturns")
-    
+
+    # 1. Initial Data Preparation
     y = pd.to_numeric(df[target], errors='coerce')
     valid_characteristics = [col for col in characteristics if col in df.columns and pd.api.types.is_numeric_dtype(df[col])]
     X = df[valid_characteristics].copy().replace([np.inf, -np.inf], np.nan)
-    
+
     valid_indices = y.dropna().index
     X, y = X.loc[valid_indices], y.loc[valid_indices]
+
     if X.empty or y.empty or len(y) < 20:
-        logging.warning(f"Insufficient data for pure returns calculation: {len(y)} samples.")
+        logging.warning(f"Insufficient data for pure returns calculation after cleaning: {len(y)} samples.")
         return pd.Series(dtype=float, name="PureReturns")
 
+    # 2. Clean and Pre-process Factor Data (X matrix)
     for col in X.columns:
         if X[col].isna().any():
             median_val = X[col].median()
             X[col] = X[col].fillna(median_val)
-        if X[col].min() >= 0 and X[col].quantile(0.75) > 1000: X[col] = np.log1p(X[col])
-        if X[col].var() < 1e-8: X[col] += np.random.normal(0, 1e-4, len(X))
-    
-    # Use a more aggressive VIF check first
+        # Log-transform large, positive-skewed variables like Market Cap for better distribution
+        if X[col].min() >= 0 and X[col].quantile(0.75) > 1000:
+            X[col] = np.log1p(X[col])
+        # Add tiny noise to zero-variance columns to prevent numerical errors
+        if X[col].var() < 1e-8:
+            X[col] += np.random.normal(0, 1e-4, len(X))
+
+    # 3. Weighted Least Squares (WLS) Transformation (if applicable)
+    if idio_variances is not None:
+        logging.info("Preparing for Weighted Least Squares (WLS) regression.")
+        # Align variances with the current data's index (X.index)
+        aligned_variances = idio_variances.reindex(X.index).fillna(idio_variances.median())
+        
+        # Weights are the inverse of standard deviation (sigma)
+        # We cap the minimum variance to avoid division by zero or huge weights
+        weights = 1 / np.sqrt(aligned_variances.clip(lower=1e-6))
+        weights[~np.isfinite(weights)] = 1.0  # Handle any resulting NaNs or Infs
+        
+        # Apply weights to both dependent (y) and independent (X) variables
+        y = y * weights
+        X = X.multiply(weights, axis=0)
+    else:
+        logging.info("Idiosyncratic variances not provided. Performing OLS-type regression.")
+
+    # 4. Handle Multicollinearity
     final_characteristics = check_multicollinearity(X, valid_characteristics, vif_threshold)
     if not final_characteristics:
-        logging.warning("No valid characteristics left after VIF check.")
+        logging.warning("No valid characteristics left after VIF check. Cannot run regression.")
         return pd.Series(dtype=float, name="PureReturns")
-    
     X = X[final_characteristics]
-    
+
+    # 5. Scale, Decompose (PCA), and Regress
     scaler = RobustScaler()
     X_scaled = scaler.fit_transform(X)
-    
+
     try:
-        model = Ridge(alpha=1.0, solver='auto') # Use a robust solver
-        
+        model = Ridge(alpha=1.0, solver='auto')
+
         if use_pca:
-            # --- PCA IMPLEMENTATION ---
-            # Keep enough components to explain 95% of the variance
             pca = PCA(n_components=pca_variance_threshold)
             X_pca = pca.fit_transform(X_scaled)
-            
-            # Regress on the uncorrelated principal components
             model.fit(X_pca, y)
-            
-            # Transform coefficients back to the original feature space for interpretation
-            # This is the key step: model.coef_ are for PCA space, we need them for original features
+            # Invert PCA transformation to get coefficients in the scaled space
             original_space_coefs = pca.inverse_transform(model.coef_.reshape(1, -1))[0]
-            
         else:
-            # Fallback to the old method if PCA is turned off
             model.fit(X_scaled, y)
             original_space_coefs = model.coef_
 
-        # Unscale coefficients to be interpretable
+        # 6. Un-scale Coefficients to get final "Pure Returns"
+        # This is a critical step to make coefficients interpretable
         scaler_scale = scaler.scale_
+        # Prevent division by zero for any feature that had zero variance
         scaler_scale[scaler_scale < 1e-8] = 1e-8
         unscaled_coefs = original_space_coefs / scaler_scale
-        
+
+        # Clip results to a reasonable range to avoid extreme values
         return pd.Series(unscaled_coefs, index=final_characteristics, name="PureReturns").clip(lower=-10.0, upper=10.0)
-        
+
     except Exception as e:
         logging.error(f"Pure returns regression failed: {e}")
         return pd.Series(dtype=float, name="PureReturns")
+
 def calculate_ideal_weights(factor_rankings, etf_histories, df, pure_returns=None, rank_threshold=1000, max_weight=15.0, pure_return_weight=0.8):
     """
-    Calculates dynamic 'ideal' weights for the metric sliders based on factor
-    correlation strength and pure factor returns.
+    Calculates dynamic 'ideal' weights for the metric sliders.
     """
     all_metrics = list(default_weights.keys())
     long_to_short_map = REVERSE_METRIC_NAME_MAP
 
-    # Use factor rankings based on correlation if available
     if factor_rankings.empty or 'Avg_Rank' not in factor_rankings.columns:
-        # Create a fallback ranking if analysis failed
         factor_rankings = pd.DataFrame(index=[long_to_short_map.get(m, m) for m in all_metrics],
                                       columns=['Avg_Rank']).fillna(1.0)
 
     valid_factors = factor_rankings[factor_rankings['Avg_Rank'] < rank_threshold].copy()
     if valid_factors.empty:
         valid_factors = factor_rankings.copy()
-        # Add jitter to prevent all weights from being identical if ranks are flat
         valid_factors['Avg_Rank'] = valid_factors['Avg_Rank'].fillna(1.0) + np.random.uniform(0.1, 0.5, len(valid_factors))
 
-    # Calculate weight component from correlation rank (lower rank is better)
     valid_factors['Inverse_Corr_Rank'] = 1 / valid_factors['Avg_Rank'].replace(0, 1e-6)
     total_inverse_corr_rank = valid_factors['Inverse_Corr_Rank'].sum() or 1e-6
 
-    # Calculate weight component from pure returns (higher absolute return is better)
     pure_return_ranks = {}
     if pure_returns is not None and not pure_returns.empty and pure_returns.abs().sum() > 0:
-        # We rank by the absolute value of the pure return coefficient
         pure_return_ranks_series = pure_returns.abs().rank(ascending=False, na_option='bottom')
         pure_return_ranks = {metric: 1 / rank if not pd.isna(rank) and rank > 0 else 1e-6
                             for metric, rank in pure_return_ranks_series.items()}
         total_inverse_pure_rank = sum(pure_return_ranks.values()) or 1e-6
     else:
-        # Fallback if no pure returns are available
         total_inverse_pure_rank = len(all_metrics)
         pure_return_ranks = {long_to_short_map.get(m, m): 1.0 + np.random.uniform(0.1, 0.5) for m in all_metrics}
 
-    # Combine the two components into a single weight
     weights = {}
     for long_name in all_metrics:
         short_name = long_to_short_map.get(long_name, long_name)
-        
-        # Get the weight from correlation analysis
         corr_rank_weight = (valid_factors.loc[short_name, 'Inverse_Corr_Rank'] / total_inverse_corr_rank * 100) if short_name in valid_factors.index else 1.0
-        
-        # Get the weight from pure returns analysis
         pure_rank_weight = (pure_return_ranks.get(short_name, 1.0) / total_inverse_pure_rank * 100) if total_inverse_pure_rank > 0 else 1.0
-        
-        # Combine them using the pure_return_weight parameter
         weights[long_name] = (1 - pure_return_weight) * corr_rank_weight + pure_return_weight * pure_rank_weight
 
-    # Cap weights at a maximum value and redistribute the excess
     excess_weight = 0.0
     for metric in weights:
         if weights[metric] > max_weight:
@@ -1322,25 +1326,21 @@ def calculate_ideal_weights(factor_rankings, etf_histories, df, pure_returns=Non
             if weights[metric] < max_weight and weights[metric] > 0:
                 weights[metric] += (weights[metric] / non_capped_sum) * excess_weight
 
-    # Normalize the final weights to sum to 100
     total_weight = sum(weights.values())
     if total_weight > 0:
         norm_factor = 100.0 / total_weight
         for metric in weights:
             weights[metric] *= norm_factor
     else:
-        # Final fallback to equal weights if everything fails
         weights = {metric: 100.0 / len(all_metrics) for metric in all_metrics}
 
-    # The function in your original code returned these three, so we will match it
     cluster_fig = None 
     etf_clusters = {etf: [etf] for etf in etf_histories.keys()}
     return weights, cluster_fig, etf_clusters
 
-# REPLACE this entire function in your code
 def analyze_factor_correlations(df, returns_dict):
     """
-    Analyzes factor correlations with robust data cleaning to prevent NumPy warnings.
+    Analyzes factor correlations with robust data cleaning.
     """
     if df.empty:
         logging.error("analyze_factor_correlations received empty DataFrame")
@@ -1353,12 +1353,13 @@ def analyze_factor_correlations(df, returns_dict):
     
     valid_data = df[numeric_cols].copy()
     
-    # --- FIX: Changed inplace=True to direct reassignment ---
+    # FIX: Replaced inplace=True with direct reassignment
     valid_data = valid_data.replace([np.inf, -np.inf], np.nan)
     valid_data = valid_data.dropna(axis=1, how='all')
     
     for col in valid_data.columns:
         median_val = valid_data[col].median()
+        # FIX: Replaced inplace=True with direct reassignment
         valid_data[col] = valid_data[col].fillna(median_val)
         
         if valid_data[col].var() < 1e-6:
@@ -1387,70 +1388,43 @@ def analyze_factor_correlations(df, returns_dict):
     except Exception as e:
         logging.error(f"Error in analyze_factor_correlations after cleaning: {str(e)}")
         return df, pd.DataFrame(), pd.DataFrame(index=numeric_cols, columns=['Avg_Rank']).fillna(1.0)
-# REPLACE this entire function in your code
+
 def calculate_correlation_matrix(tickers, returns_dict, window=90):
     """
     Calculates a robust, positive semi-definite correlation and covariance matrix.
-
-    This function uses the Ledoit-Wolf shrinkage estimator for covariance, which is
-    well-suited for financial data (many assets, fewer time periods). It then
-    derives the correlation matrix and ensures it is positive semi-definite (PSD).
-
-    Args:
-        tickers (list): The complete list of tickers for the final matrix shape.
-        returns_dict (dict): A dictionary where keys are tickers and values are pd.Series of returns.
-        window (int): The number of recent trading days to use for the calculation.
-
-    Returns:
-        tuple: A tuple containing:
-            - pd.DataFrame: The final, PSD-corrected correlation matrix.
-            - pd.DataFrame: The annualized covariance matrix.
     """
     n = len(tickers)
     if n == 0 or not returns_dict:
-        # Return empty dataframes if there's nothing to process
         return pd.DataFrame(), pd.DataFrame()
 
-    # Create a DataFrame from the pre-calculated returns
     returns_df = pd.DataFrame(returns_dict).reindex(columns=tickers)
-    
-    # Take the recent window of returns
     aligned_returns = returns_df.tail(window)
     
-    # --- FIX: Replaced 'inplace=True' with direct reassignment for safety and clarity ---
-    # Drop columns (stocks) that have no data at all in the window
+    # FIX: Replaced inplace=True with direct reassignment
     aligned_returns = aligned_returns.dropna(axis=1, how='all')
-    # Fill any remaining gaps (e.g., a single missing day) with 0.0
     aligned_returns = aligned_returns.fillna(0.0)
 
     valid_tickers = aligned_returns.columns.tolist()
     if len(valid_tickers) < 2:
-        # Not enough data to compute a matrix, return identity matrices
         identity = pd.DataFrame(np.eye(n), index=tickers, columns=tickers)
         return identity, identity
 
     try:
-        # Use Ledoit-Wolf shrinkage to get a well-conditioned covariance matrix
         lw = LedoitWolf()
         lw.fit(aligned_returns)
         
-        # Annualize the covariance matrix (daily variance * 252)
         cov_matrix_values = lw.covariance_ * 252
         
-        # Build the full-sized covariance matrix, handling tickers that were dropped
         cov_matrix_full = pd.DataFrame(np.eye(n) * np.mean(np.diag(cov_matrix_values)), index=tickers, columns=tickers)
         cov_matrix_full.loc[valid_tickers, valid_tickers] = cov_matrix_values
         
-        # Derive the correlation matrix from the covariance matrix
         vols = np.sqrt(np.diag(cov_matrix_values))
-        vols[vols < 1e-8] = 1.0 # Avoid division by zero for non-volatile assets
+        vols[vols < 1e-8] = 1.0
         corr_matrix_values = cov_matrix_values / np.outer(vols, vols)
         
-        # Build the full-sized correlation matrix
         corr_matrix_full = pd.DataFrame(np.eye(n), index=tickers, columns=tickers)
         corr_matrix_full.loc[valid_tickers, valid_tickers] = corr_matrix_values
         
-        # Ensure the final correlation matrix is positive semi-definite (PSD) for stability
         final_corr = pd.DataFrame(nearest_psd_matrix(corr_matrix_full.values), index=tickers, columns=tickers)
 
     except Exception as e:
@@ -1462,7 +1436,7 @@ def calculate_correlation_matrix(tickers, returns_dict, window=90):
 
 def calculate_weights(returns_df, method="equal", cov_matrix=None, factor_returns=None, betas=None):
     """
-    Calculate portfolio weights with various methods, including FMP and Alpha-Orthogonal.
+    Calculate portfolio weights with various methods.
     """
     n_assets = len(returns_df.columns)
     tickers = returns_df.columns
@@ -1483,17 +1457,11 @@ def calculate_weights(returns_df, method="equal", cov_matrix=None, factor_return
             cov_matrix = nearest_psd_matrix(cov_matrix)
             w = cp.Variable(n_assets)
             
-            # --- FIX: Add risk aversion and weight constraints ---
-            gamma = cp.Parameter(nonneg=True, value=0.5) # Risk aversion parameter
-            max_weight = 0.15 # Max 15% in any single stock
+            gamma = cp.Parameter(nonneg=True, value=0.5)
+            max_weight = 0.15
             
             objective = cp.Maximize(mu.values @ w - gamma * cp.quad_form(w, cov_matrix))
-            constraints = [
-                cp.sum(w) == 1, 
-                w >= 0,
-                w <= max_weight # Diversification constraint
-            ]
-            # --- END FIX ---
+            constraints = [cp.sum(w) == 1, w >= 0, w <= max_weight]
             
             problem = cp.Problem(objective, constraints)
             problem.solve(solver=cp.SCS)
@@ -1502,7 +1470,6 @@ def calculate_weights(returns_df, method="equal", cov_matrix=None, factor_return
                  return pd.Series(w.value / np.sum(w.value), index=tickers)
             else:
                  return pd.Series(np.ones(n_assets) / n_assets, index=tickers)
-
 
         elif method == "fmp":
             if factor_returns is None or cov_matrix is None:
@@ -1531,6 +1498,7 @@ def calculate_weights(returns_df, method="equal", cov_matrix=None, factor_return
     except Exception as e:
         logging.error(f"Error in weight calculation for method '{method}': {e}")
         return pd.Series(np.ones(n_assets) / n_assets, index=tickers)
+
 def display_ma_deviation(history):
     st.subheader("Price Deviation from Moving Averages")
 
@@ -1659,18 +1627,15 @@ def display_momentum_bar(ticker_symbol, history):
     fig.update_layout(xaxis=dict(range=[0, 100], showticklabels=False, showgrid=False, zeroline=False), yaxis=dict(showticklabels=False, showgrid=False, zeroline=False), showlegend=False, plot_bgcolor='rgba(68, 68, 68, 0.5)', paper_bgcolor='rgba(0,0,0,0)', height=40, margin=dict(l=0, r=0, t=0, b=0))
     st.plotly_chart(fig, use_container_width=True)
     st.caption("Bar shows 14-day trend; white marker shows 14-hour pressure; dashed lines at RSI 35 and 65.")
-# --- START: Individual Stock Dashboard & Financials Functions ---
 
 def calculate_portfolio_relative_z_score(weighted_df, etf_histories, best_etf, period="3y", window=252, min_window=200):
     """Calculates the relative Z-score of the entire portfolio against its best-correlated ETF."""
     portfolio_prices = None
 
-    # Check if weights are valid
     if 'Weight' not in weighted_df.columns or weighted_df['Weight'].sum() == 0:
         logging.warning("Invalid weights for portfolio Z-score calculation.")
         return np.nan, best_etf
 
-    # Create a weighted, rebased price series for the portfolio
     for idx, row in weighted_df.iterrows():
         ticker = row['Ticker']
         weight = row['Weight']
@@ -1679,13 +1644,11 @@ def calculate_portfolio_relative_z_score(weighted_df, etf_histories, best_etf, p
             if history.empty or 'Close' not in history.columns or len(history) < 2:
                 continue
 
-            # Rebase the price series to start at 100 to normalize scales
             rebased_prices = 100 * (history['Close'] / history['Close'].iloc[0])
 
             if portfolio_prices is None:
                 portfolio_prices = rebased_prices * weight
             else:
-                # Align and add the weighted series
                 portfolio_prices = portfolio_prices.add(rebased_prices * weight, fill_value=0)
 
         except Exception as e:
@@ -1696,7 +1659,8 @@ def calculate_portfolio_relative_z_score(weighted_df, etf_histories, best_etf, p
         logging.error("Failed to construct portfolio price series for Z-score calculation.")
         return np.nan, best_etf
 
-    portfolio_prices.dropna(inplace=True)
+    # FIX: Replaced inplace=True with direct assignment
+    portfolio_prices = portfolio_prices.dropna()
     if portfolio_prices.empty:
         logging.error("Portfolio price series is empty after dropping NaNs.")
         return np.nan, best_etf
@@ -1706,7 +1670,6 @@ def calculate_portfolio_relative_z_score(weighted_df, etf_histories, best_etf, p
         logging.warning(f"No history for best ETF '{best_etf}' in portfolio Z-score calculation.")
         return np.nan, best_etf
 
-    # Rebase ETF prices as well
     etf_prices = 100 * (etf_prices_df['Close'] / etf_prices_df['Close'].iloc[0])
 
     common_index = portfolio_prices.index.intersection(etf_prices.index)[-window:]
@@ -1730,6 +1693,7 @@ def calculate_portfolio_relative_z_score(weighted_df, etf_histories, best_etf, p
 
     logging.warning("Invalid portfolio relative data")
     return np.nan, best_etf
+
 def calculate_absolute_z_score_and_trend(daily_history):
     if daily_history.empty or len(daily_history) < 252: return np.nan, "NEUTRAL"
     prices_log = np.log(daily_history['Close'].iloc[-252:])
@@ -1760,7 +1724,7 @@ def display_signal_sigma_checklist(stock_data, daily_history):
     return_6m, return_1y = stock_data.get('Return_126d'), stock_data.get('Return_252d')
     f_score = stock_data.get('Piotroski_F-Score')
     op_leverage = stock_data.get('Operating_Leverage')
-    rd_ratio = stock_data.get('RD_to_Gross_Profit_2Y_Avg', 0) # Default to 0 if not present
+    rd_ratio = stock_data.get('RD_to_Gross_Profit_2Y_Avg', 0)
 
     st.markdown(f"**Current Trend Status: `{trend_status}`**")
     st.markdown("---")
@@ -1839,7 +1803,9 @@ def display_valuation_wizard(ticker_symbol):
         history = ticker.history(period="3y")
         financials = ticker.financials
         info = ticker.info
-        rev_g = (financials.loc['Total Revenue'].pct_change(periods=-1).mean()) * 100 if 'Total Revenue' in financials.index else 5.0
+
+# Corrected code to address the warning
+        rev_g = (financials.loc['Total Revenue'].pct_change(periods=-1, fill_method=None).mean()) * 100 if 'Total Revenue' in financials.index else 5.0
         gm = (financials.loc['Gross Profit'].iloc[0] / financials.loc['Total Revenue'].iloc[0]) * 100 if 'Gross Profit' in financials.index and 'Total Revenue' in financials.index and financials.loc['Total Revenue'].iloc[0] > 0 else 50.0
         op_inc = financials.loc['Operating Income'].iloc[0] if 'Operating Income' in financials.index else 0
         rev = financials.loc['Total Revenue'].iloc[0] if 'Total Revenue' in financials.index else 0
@@ -1877,13 +1843,9 @@ def display_valuation_wizard(ticker_symbol):
         else:
             st.error(f"Valuation Failed. Reason: {commentary}")
 
-# REPLACE the get_correlated_stocks function with this cleaner version.
-
-# --- FIX: Replaced this entire function to be more robust against NaN data ---
 def get_correlated_stocks(selected_ticker, returns_dict, results_df, top_n=10):
     """
-    Finds other tickers most correlated with the selected ticker. This version is
-    robust against missing or non-overlapping return data.
+    Finds other tickers most correlated with the selected ticker.
     """
     if selected_ticker not in returns_dict or len(returns_dict) < 2:
         logging.warning(f"Correlation check failed: {selected_ticker} not in returns_dict or not enough tickers.")
@@ -1896,8 +1858,6 @@ def get_correlated_stocks(selected_ticker, returns_dict, results_df, top_n=10):
         return pd.DataFrame()
 
     recent_returns = all_returns_df.tail(90)
-    
-    # Fill missing values with 0.0 to make correlation calculation robust
     recent_returns_filled = recent_returns.fillna(0.0)
 
     variances = recent_returns_filled.var()
@@ -1926,17 +1886,16 @@ def get_correlated_stocks(selected_ticker, returns_dict, results_df, top_n=10):
         additional_info = results_df[required_cols].set_index('Ticker')
         corr_df = corr_df.join(additional_info)
         corr_df = corr_df.rename(columns={'Best_Factor': 'Benchmark'})
-        corr_df['Benchmark'].fillna("N/A", inplace=True)
+        # FIX: Replaced inplace=True with direct assignment
+        corr_df['Benchmark'] = corr_df['Benchmark'].fillna("N/A")
     else:
-        # Create placeholder columns if the main df is missing them
         corr_df['Relative_Z_Score'] = np.nan
         corr_df['Benchmark'] = "N/A"
 
-    # Sort by the absolute value of 'Relative_Z_Score' and handle potential NaNs
     corr_df = corr_df.reindex(corr_df['Relative_Z_Score'].abs().fillna(0).sort_values(ascending=False).index)
 
     return corr_df.head(top_n)
-# REPLACE this function in your code
+
 def display_stock_dashboard(ticker_symbol, results_df, returns_dict, etf_histories):
     """Orchestrator function to display the entire individual stock dashboard."""
     st.header(f"🔬 Detailed Dashboard for {ticker_symbol}")
@@ -1985,15 +1944,12 @@ def display_stock_dashboard(ticker_symbol, results_df, returns_dict, etf_histori
         
         display_momentum_bar(ticker_symbol, daily_history)
 
-    # --- THE FIX (PART 2) ---
     with col2:
         st.subheader(f"Most Correlated Stocks (90d)")
         
-        # 1. Call the function with the CORRECT arguments. No 'etf_histories'.
         correlated_stocks_df = get_correlated_stocks(ticker_symbol, returns_dict, results_df)
 
         if not correlated_stocks_df.empty:
-            # 2. Display the CORRECT and CLEANED columns from the function above.
             st.dataframe(
                 correlated_stocks_df[['Correlation', 'Relative_Z_Score', 'Benchmark']],
                 use_container_width=True
@@ -2011,10 +1967,6 @@ def display_stock_dashboard(ticker_symbol, results_df, returns_dict, etf_histori
 ################################################################################
 # SECTION 2: MAIN APPLICATION LOGIC
 ################################################################################
-################################################################################
-# SECTION 2: MAIN APPLICATION LOGIC
-################################################################################
-# REPLACE this entire function in your code
 def main():
     st.title("Quantitative Portfolio Analysis")
     st.sidebar.header("Controls")
@@ -2048,30 +2000,55 @@ def main():
     if failed_tickers:
         st.expander("Show Failed Tickers").warning(f"{len(failed_tickers)} tickers failed: {', '.join(failed_tickers)}")
 
-    # --- NEW: AUTOMATIC WEIGHTING BASED ON MULTI-HORIZON COEFFICIENT STABILITY ---
+    # --- WINSORIZATION STEP ---
+    # Apply the robust outlier cleaning method to the raw return data
+    # before it's used in any risk models or calculations. This improves stability.
+    with st.spinner("Applying Winsorization to clean return data..."):
+        winsorized_returns_dict = winsorize_returns(returns_dict, lookback_T=126, d_max=7.0)
+    st.success("Return data cleaned successfully.")
+    
+    # --- Automatic Factor Weighting with Two-Stage WLS Regression ---
     st.sidebar.subheader("Automatic Factor Weighting")
-    with st.spinner("Analyzing factor stability across multiple time horizons..."):
-        # 1. Define the time horizons to test
+    with st.spinner("Analyzing factor stability (using Two-Stage WLS Regression)..."):
         time_horizons = {
-            "1M": "Return_21d",
-            "3M": "Return_63d",
-            "6M": "Return_126d",
-            "12M": "Return_252d",
+            "1M": "Return_21d", "3M": "Return_63d",
+            "6M": "Return_126d", "12M": "Return_252d",
         }
-        
         valid_metric_cols = [c for c in results_df.columns if pd.api.types.is_numeric_dtype(results_df[c]) and 'Return' not in c and c not in ['Ticker', 'Name', 'Score']]
         stability_results = {}
 
-        # 2. Loop through each horizon, calculate pure returns, simulate history, and analyze stability
         for horizon_label, target_column in time_horizons.items():
             if target_column in results_df.columns:
-                pure_returns_today = calculate_pure_returns(results_df, valid_metric_cols, target=target_column)
+                # --- STAGE 1: OLS to get initial estimates for variances ---
+                logging.info(f"Running Stage 1 (OLS-type) regression for {horizon_label} horizon...")
+                factor_returns_s1 = calculate_pure_returns(results_df, valid_metric_cols, target=target_column)
+                
+                if factor_returns_s1.empty:
+                    continue
+
+                # --- Estimate Idiosyncratic Variances based on Stage 1 results ---
+                # We need returns and loadings in the right shape (tickers as rows)
+                asset_returns_T = pd.DataFrame(winsorized_returns_dict).T 
+                factor_loadings = results_df.set_index('Ticker')[factor_returns_s1.index]
+                
+                # Create a proxy for historical factor returns needed by the estimation function.
+                # Since we only have one cross-sectional result, we broadcast it across time.
+                factor_returns_df_s1 = pd.DataFrame(factor_returns_s1).T
+                dates = asset_returns_T.columns
+                factor_returns_hist_proxy = pd.DataFrame(np.outer(factor_returns_df_s1.values, np.ones(len(dates))), 
+                                                         index=factor_returns_df_s1.index, columns=dates)
+
+                idio_vars = estimate_idiosyncratic_variances(asset_returns_T, factor_loadings, factor_returns_hist_proxy)
+
+                # --- STAGE 2: WLS using variances from Stage 1 for more robust estimates ---
+                logging.info(f"Running Stage 2 (WLS) regression for {horizon_label} horizon...")
+                pure_returns_today = calculate_pure_returns(results_df, valid_metric_cols, target=target_column, idio_variances=idio_vars)
+
                 if not pure_returns_today.empty:
                     historical_pure_returns = simulate_historical_pure_returns(pure_returns_today)
                     stability_df = analyze_coefficient_stability(historical_pure_returns)
                     stability_results[horizon_label] = stability_df
-        
-        # 3. Aggregate the stability results from all horizons to find the most consistent factors
+
         all_possible_metrics = list(default_weights.keys())
         auto_weights, rationale_df = aggregate_stability_and_set_weights(
             stability_results, all_possible_metrics, REVERSE_METRIC_NAME_MAP
@@ -2090,8 +2067,7 @@ def main():
         )
         
     user_weights = auto_weights
-    # --- END OF AUTOMATION BLOCK ---
-
+    
     # --- Scoring Block ---
     raw_score = pd.Series(0.0, index=results_df.index)
     for long_name, weight in user_weights.items():
@@ -2100,10 +2076,8 @@ def main():
             if short_name in results_df.columns and short_name in rationale_df.index:
                 rank_series = results_df[short_name].rank(pct=True)
                 
-                # *** CRITICAL FIX ***
-                # Use the SIGN of the AGGREGATED sharpe coefficient to determine if lower is better
                 if rationale_df.loc[short_name, 'avg_sharpe_coeff'] < 0:
-                    rank_series = 1 - rank_series # Invert the rank for factors that are better when low (e.g., P/E ratio)
+                    rank_series = 1 - rank_series
                 
                 raw_score += rank_series.fillna(0.5) * weight
 
@@ -2112,23 +2086,23 @@ def main():
     top_15_df = results_df.sort_values('Score', ascending=False).head(15).copy()
     top_15_tickers = top_15_df['Ticker'].tolist()
 
-    # --- The rest of the main function remains unchanged ---
-    
+    # --- Portfolio Overview ---
     st.header("📈 Portfolio Overview")
     if not top_15_tickers:
         st.warning("No stocks for portfolio construction.")
         st.stop()
 
-    portfolio_returns_df = pd.DataFrame(returns_dict).reindex(columns=top_15_tickers).dropna(how='all')
-    _, cov_matrix = calculate_correlation_matrix(top_15_tickers, returns_dict, window=corr_window)
+    portfolio_returns_df = pd.DataFrame(winsorized_returns_dict).reindex(columns=top_15_tickers).dropna(how='all')
+    _, cov_matrix = calculate_correlation_matrix(top_15_tickers, winsorized_returns_dict, window=corr_window)
     cov_matrix = cov_matrix.loc[top_15_tickers, top_15_tickers]
 
-    momentum_factor_returns = etf_histories['MTUM']['Close'].pct_change().dropna()
+    momentum_factor_returns = etf_histories['MTUM']['Close'].pct_change(fill_method=None).dropna()
     common_idx = portfolio_returns_df.index.intersection(momentum_factor_returns.index)
     aligned_returns = portfolio_returns_df.loc[common_idx].copy()
     aligned_momentum = momentum_factor_returns.loc[common_idx].copy()
-    aligned_returns.replace([np.inf, -np.inf], np.nan, inplace=True); aligned_momentum.replace([np.inf, -np.inf], np.nan, inplace=True)
-    aligned_returns.fillna(0.0, inplace=True); aligned_momentum.fillna(0.0, inplace=True)
+    
+    aligned_returns = aligned_returns.replace([np.inf, -np.inf], np.nan).fillna(0.0)
+    aligned_momentum = aligned_momentum.replace([np.inf, -np.inf], np.nan).fillna(0.0)
     
     betas = pd.DataFrame(index=top_15_tickers, columns=['Momentum_Beta'])
     for ticker in top_15_tickers:
@@ -2142,7 +2116,7 @@ def main():
         factor_map = {"Value (IVE)": "IVE", "Growth (IVW)": "IVW", "Quality (QUAL)": "QUAL", "Vision (Synthetic)": "VISION_SYNTHETIC"}
         key = factor_map.get(new_factor)
         if key in etf_histories:
-            factor_ts = etf_histories[key]['Close'].pct_change().dropna()
+            factor_ts = etf_histories[key]['Close'].pct_change(fill_method=None).dropna()
             p_weights = calculate_fmp_weights(aligned_returns, factor_ts, cov_matrix, existing_factors_returns=aligned_momentum.to_frame())
             
             weights_df = p_weights.reset_index()
@@ -2211,15 +2185,13 @@ def main():
     tab1, tab2, tab3 = st.tabs(["🔬 Stock Dashboard & Financials", "🎛️ Factor Analysis", "📄 Full Data Table"])
     with tab1:
         if selected_ticker:
-            display_stock_dashboard(selected_ticker, results_df, returns_dict, etf_histories)
+            display_stock_dashboard(selected_ticker, results_df, winsorized_returns_dict, etf_histories)
             display_deep_dive_data(selected_ticker)
     with tab2:
         st.subheader("Pure Factor Returns (Aggregated & Individual Horizons)")
-        # Display the main aggregated rationale first
         st.write("#### Aggregated Factor Performance")
         st.dataframe(rationale_df)
         
-        # Then allow drilling down into individual horizons
         for horizon_label, stability_df in stability_results.items():
              with st.expander(f"Details for {horizon_label} Horizon (Target: {time_horizons[horizon_label]})"):
                  if not stability_df.empty:
@@ -2229,5 +2201,6 @@ def main():
     with tab3:
         st.subheader("Full Processed Data Table")
         st.dataframe(results_df)
+
 if __name__ == "__main__":
     main()
