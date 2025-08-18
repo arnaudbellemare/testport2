@@ -686,10 +686,13 @@ def winsorize_returns(returns_dict, lookback_T=126, d_max=7.0):
         # Calculate the rolling median denominator from the formula
         rolling_median_denom = abs_log_returns.rolling(window=lookback_T, min_periods=20).median().shift(1)
         
-        # Avoid division by zero
+        
+        # Avoid division by zero and fill NaNs robustly
         rolling_median_denom.replace(0, np.nan, inplace=True)
-        rolling_median_denom.fillna(method='ffill', inplace=True)
-        rolling_median_denom.fillna(abs_log_returns.median(), inplace=True) # Backfill initial NaNs
+        # FIX: Replaced deprecated .fillna(method=...) with .ffill()
+        rolling_median_denom.ffill(inplace=True)
+        # Backfill any remaining NaNs at the beginning of the series
+        rolling_median_denom.fillna(abs_log_returns.median(), inplace=True)
 
         # Calculate the d_it score for each point in time
         d_it = abs_log_returns / rolling_median_denom
