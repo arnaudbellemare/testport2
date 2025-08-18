@@ -2017,26 +2017,32 @@ def main():
         valid_metric_cols = [c for c in results_df.columns if pd.api.types.is_numeric_dtype(results_df[c]) and 'Return' not in c and c not in ['Ticker', 'Name', 'Score']]
         stability_results = {}
 
+# --- CORRECTED CODE BLOCK (AFTER) ---
         for horizon_label, target_column in time_horizons.items():
             if target_column in results_df.columns:
                 # --- STAGE 1: OLS to get initial estimates for variances ---
                 logging.info(f"Running Stage 1 (OLS-type) regression for {horizon_label} horizon...")
+                # This returns a pd.Series with factor names in the index
                 factor_returns_s1 = calculate_pure_returns(results_df, valid_metric_cols, target=target_column)
                 
                 if factor_returns_s1.empty:
                     continue
 
                 # --- Estimate Idiosyncratic Variances based on Stage 1 results ---
-                # We need returns and loadings in the right shape (tickers as rows)
-                asset_returns_T = pd.DataFrame(winsorized_returns_dict).T 
+                asset_returns_T = pd.DataFrame(winsorized_returns_dict).T
                 factor_loadings = results_df.set_index('Ticker')[factor_returns_s1.index]
                 
-                # Create a proxy for historical factor returns needed by the estimation function.
-                # Since we only have one cross-sectional result, we broadcast it across time.
-                factor_returns_df_s1 = pd.DataFrame(factor_returns_s1).T
+                # Correctly create the historical factor return proxy
                 dates = asset_returns_T.columns
-                factor_returns_hist_proxy = pd.DataFrame(np.outer(factor_returns_df_s1.values, np.ones(len(dates))), 
-                                                         index=factor_returns_df_s1.index, columns=dates)
+                # np.outer creates a (num_factors, num_dates) array
+                proxy_values = np.outer(factor_returns_s1.values, np.ones(len(dates)))
+                
+                # Use the Series' index (factor names) for the new DataFrame's index
+                factor_returns_hist_proxy = pd.DataFrame(
+                    proxy_values,
+                    index=factor_returns_s1.index, # This is now correct
+                    columns=dates
+                )
 
                 idio_vars = estimate_idiosyncratic_variances(asset_returns_T, factor_loadings, factor_returns_hist_proxy)
 
