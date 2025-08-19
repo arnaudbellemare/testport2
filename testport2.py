@@ -723,6 +723,62 @@ def winsorize_returns(returns_dict, lookback_T=126, d_max=7.0):
             
     logging.info(f"Winsorization complete. Capped {total_winsorized_points} outlier data points across all tickers.")
     return winsorized_dict
+# --- ADD THIS ENTIRE NEW FUNCTION ---
+
+@st.cache_data
+def run_factor_stability_analysis(_results_df, _winsorized_returns_dict, _time_horizons, _valid_metric_cols, _all_possible_metrics, _reverse_metric_map):
+    """
+    Encapsulates the entire computationally expensive two-stage WLS regression 
+    and stability analysis into a single, cacheable function.
+    """
+    stability_results = {}
+    
+    for horizon_label, target_column in _time_horizons.items():
+        if target_column in _results_df.columns:
+            # --- STAGE 1: OLS to get initial estimates for variances ---
+            logging.info(f"Running Stage 1 (OLS-type) regression for {horizon_label} horizon...")
+            factor_returns_s1 = calculate_pure_returns(_results_df, _valid_metric_cols, target=target_column)
+            
+            if factor_returns_s1.empty:
+                logging.warning(f"Stage 1 for {horizon_label} produced no results. Skipping.")
+                continue
+
+            # --- Estimate Idiosyncratic Variances based on Stage 1 results ---
+            logging.info(f"Estimating idiosyncratic variances for {horizon_label} horizon...")
+            asset_returns_T = pd.DataFrame(_winsorized_returns_dict).T
+            
+            # Ensure factor_loadings only contains factors that were successfully estimated in stage 1
+            valid_s1_factors = factor_returns_s1.index
+            factor_loadings = _results_df.set_index('Ticker')[valid_s1_factors]
+            
+            # Create a historical proxy for the factor returns
+            dates = asset_returns_T.columns
+            proxy_values = np.outer(factor_returns_s1.values, np.ones(len(dates)))
+            factor_returns_hist_proxy = pd.DataFrame(
+                proxy_values,
+                index=valid_s1_factors,
+                columns=dates
+            )
+
+            idio_vars = estimate_idiosyncratic_variances(asset_returns_T, factor_loadings, factor_returns_hist_proxy)
+
+            # --- STAGE 2: WLS using variances from Stage 1 for more robust estimates ---
+            logging.info(f"Running Stage 2 (WLS) regression for {horizon_label} horizon...")
+            pure_returns_today = calculate_pure_returns(_results_df, _valid_metric_cols, target=target_column, idio_variances=idio_vars)
+
+            if not pure_returns_today.empty:
+                historical_pure_returns = simulate_historical_pure_returns(pure_returns_today)
+                stability_df = analyze_coefficient_stability(historical_pure_returns)
+                stability_results[horizon_label] = stability_df
+            else:
+                logging.warning(f"Stage 2 for {horizon_label} produced no results.")
+
+    # Aggregate results from all horizons
+    auto_weights, rationale_df = aggregate_stability_and_set_weights(
+        stability_results, _all_possible_metrics, _reverse_metric_map
+    )
+    
+    return auto_weights, rationale_df, stability_results    
 def calculate_hurst_lo_modified(series, min_n=10, max_n=None, q_method='auto'):
     if isinstance(series, pd.Series): series = series.values
     series = series[~np.isnan(series)]
@@ -1970,6 +2026,9 @@ def display_stock_dashboard(ticker_symbol, results_df, returns_dict, etf_histori
 ################################################################################
 # SECTION 2: MAIN APPLICATION LOGIC
 ################################################################################
+################################################################################
+# SECTION 2: MAIN APPLICATION LOGIC
+################################################################################
 def main():
     st.title("Quantitative Portfolio Analysis")
     st.sidebar.header("Controls")
@@ -2004,63 +2063,28 @@ def main():
         st.expander("Show Failed Tickers").warning(f"{len(failed_tickers)} tickers failed: {', '.join(failed_tickers)}")
 
     # --- WINSORIZATION STEP ---
-    # Apply the robust outlier cleaning method to the raw return data
-    # before it's used in any risk models or calculations. This improves stability.
     with st.spinner("Applying Winsorization to clean return data..."):
         winsorized_returns_dict = winsorize_returns(returns_dict, lookback_T=126, d_max=7.0)
     st.success("Return data cleaned successfully.")
     
-    # --- Automatic Factor Weighting with Two-Stage WLS Regression ---
+    # --- CORRECTED & CACHED Automatic Factor Weighting ---
     st.sidebar.subheader("Automatic Factor Weighting")
-    with st.spinner("Analyzing factor stability (using Two-Stage WLS Regression)..."):
+    with st.spinner("Analyzing factor stability... This may take a few minutes on the first run."):
         time_horizons = {
             "1M": "Return_21d", "3M": "Return_63d",
             "6M": "Return_126d", "12M": "Return_252d",
         }
         valid_metric_cols = [c for c in results_df.columns if pd.api.types.is_numeric_dtype(results_df[c]) and 'Return' not in c and c not in ['Ticker', 'Name', 'Score']]
-        stability_results = {}
-
-# --- CORRECTED CODE BLOCK (AFTER) ---
-        for horizon_label, target_column in time_horizons.items():
-            if target_column in results_df.columns:
-                # --- STAGE 1: OLS to get initial estimates for variances ---
-                logging.info(f"Running Stage 1 (OLS-type) regression for {horizon_label} horizon...")
-                # This returns a pd.Series with factor names in the index
-                factor_returns_s1 = calculate_pure_returns(results_df, valid_metric_cols, target=target_column)
-                
-                if factor_returns_s1.empty:
-                    continue
-
-                # --- Estimate Idiosyncratic Variances based on Stage 1 results ---
-                asset_returns_T = pd.DataFrame(winsorized_returns_dict).T
-                factor_loadings = results_df.set_index('Ticker')[factor_returns_s1.index]
-                
-                # Correctly create the historical factor return proxy
-                dates = asset_returns_T.columns
-                # np.outer creates a (num_factors, num_dates) array
-                proxy_values = np.outer(factor_returns_s1.values, np.ones(len(dates)))
-                
-                # Use the Series' index (factor names) for the new DataFrame's index
-                factor_returns_hist_proxy = pd.DataFrame(
-                    proxy_values,
-                    index=factor_returns_s1.index, # This is now correct
-                    columns=dates
-                )
-
-                idio_vars = estimate_idiosyncratic_variances(asset_returns_T, factor_loadings, factor_returns_hist_proxy)
-
-                # --- STAGE 2: WLS using variances from Stage 1 for more robust estimates ---
-                logging.info(f"Running Stage 2 (WLS) regression for {horizon_label} horizon...")
-                pure_returns_today = calculate_pure_returns(results_df, valid_metric_cols, target=target_column, idio_variances=idio_vars)
-
-                if not pure_returns_today.empty:
-                    historical_pure_returns = simulate_historical_pure_returns(pure_returns_today)
-                    stability_df = analyze_coefficient_stability(historical_pure_returns)
-                    stability_results[horizon_label] = stability_df
-
         all_possible_metrics = list(default_weights.keys())
-        auto_weights, rationale_df = aggregate_stability_and_set_weights(
-            stability_results, all_possible_metrics, REVERSE_METRIC_NAME_MAP
+
+        # Call the new cached function to perform the expensive calculations
+        auto_weights, rationale_df, stability_results = run_factor_stability_analysis(
+            results_df, 
+            winsorized_returns_dict, 
+            time_horizons, 
+            valid_metric_cols, 
+            all_possible_metrics, 
+            REVERSE_METRIC_NAME_MAP
         )
 
     with st.sidebar.expander("View Factor Stability Rationale", expanded=True):
@@ -2082,7 +2106,7 @@ def main():
     for long_name, weight in user_weights.items():
         if weight > 0:
             short_name = REVERSE_METRIC_NAME_MAP.get(long_name)
-            if short_name in results_df.columns and short_name in rationale_df.index:
+            if short_name in results_df.columns and rationale_df is not None and not rationale_df.empty and short_name in rationale_df.index:
                 rank_series = results_df[short_name].rank(pct=True)
                 
                 if rationale_df.loc[short_name, 'avg_sharpe_coeff'] < 0:
@@ -2105,7 +2129,7 @@ def main():
     _, cov_matrix = calculate_correlation_matrix(top_15_tickers, winsorized_returns_dict, window=corr_window)
     cov_matrix = cov_matrix.loc[top_15_tickers, top_15_tickers]
 
-    momentum_factor_returns = etf_histories['MTUM']['Close'].pct_change(fill_method=None).dropna()
+    momentum_factor_returns = etf_histories['MTUM']['Close'].pct_change().dropna()
     common_idx = portfolio_returns_df.index.intersection(momentum_factor_returns.index)
     aligned_returns = portfolio_returns_df.loc[common_idx].copy()
     aligned_momentum = momentum_factor_returns.loc[common_idx].copy()
@@ -2125,7 +2149,7 @@ def main():
         factor_map = {"Value (IVE)": "IVE", "Growth (IVW)": "IVW", "Quality (QUAL)": "QUAL", "Vision (Synthetic)": "VISION_SYNTHETIC"}
         key = factor_map.get(new_factor)
         if key in etf_histories:
-            factor_ts = etf_histories[key]['Close'].pct_change(fill_method=None).dropna()
+            factor_ts = etf_histories[key]['Close'].pct_change().dropna()
             p_weights = calculate_fmp_weights(aligned_returns, factor_ts, cov_matrix, existing_factors_returns=aligned_momentum.to_frame())
             
             weights_df = p_weights.reset_index()
@@ -2198,15 +2222,20 @@ def main():
             display_deep_dive_data(selected_ticker)
     with tab2:
         st.subheader("Pure Factor Returns (Aggregated & Individual Horizons)")
-        st.write("#### Aggregated Factor Performance")
-        st.dataframe(rationale_df)
+        if rationale_df is not None and not rationale_df.empty:
+            st.write("#### Aggregated Factor Performance")
+            st.dataframe(rationale_df)
         
-        for horizon_label, stability_df in stability_results.items():
-             with st.expander(f"Details for {horizon_label} Horizon (Target: {time_horizons[horizon_label]})"):
-                 if not stability_df.empty:
-                     st.dataframe(stability_df)
-                 else:
-                     st.warning(f"No significant factors found for the {horizon_label} horizon.")
+        if stability_results:
+            for horizon_label, stability_df in stability_results.items():
+                 with st.expander(f"Details for {horizon_label} Horizon (Target: {time_horizons[horizon_label]})"):
+                     if not stability_df.empty:
+                         st.dataframe(stability_df)
+                     else:
+                         st.warning(f"No significant factors found for the {horizon_label} horizon.")
+        else:
+            st.warning("Factor stability results are not available.")
+            
     with tab3:
         st.subheader("Full Processed Data Table")
         st.dataframe(results_df)
